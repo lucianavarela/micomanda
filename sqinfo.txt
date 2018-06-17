@@ -1,0 +1,7 @@
+username: b6261c21422bec
+
+password: 2806b3b1
+@
+host: us-cdbr-iron-east-04.cleardb.net/
+
+database name: heroku_bcf733eb5db0982?reconnect=true
