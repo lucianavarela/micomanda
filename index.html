@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="static/css/normalize.css">
+    <link rel="stylesheet" href="static/css/estilos.css">
+    <script src="static/js/main.js"></script>
+    <script src="static/js/jquery-3.3.1.min.js"></script>
+    <title>Mi Comanda</title>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="static/assets/banner.jpg" alt="Logo">
+        </div>
+    </header>
+    <div class="navegacion">
+        <nav>
+            <ul>
+                <li><a onclick="traerInfo('mesa')">Mesas</a>
+                    <ul>
+                        <li><a href="#">Ingresar</a></li>
+                    </ul>
+                </li>
+                <li><a onclick="traerInfo('comanda')">Comandas</a>
+                    <ul>
+                        <li><a href="#">Ingresar</a></li>
+                    </ul>
+                </li>
+                <li><a onclick="traerInfo('pedido')">Pedidos</a>
+                    <ul>
+                        <li><a href="#">Ingresar</a></li>
+                    </ul>
+                </li>
+                <li><a onclick="traerInfo('mozo')">Mozos</a>
+                    <ul>
+                        <li><a href="#">Ingresar</a></li>
+                    </ul>
+                </li>
+                <li><a onclick="traerInfo('encuesta')">Encuesta</a>
+                    <ul>
+                        <li><a href="#">Ingresar</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="contenido contenedor">
+        <h3 id="mensaje"></h3>
+        <main>
+            <section>
+                <table id="lista" style="display: none">
+                    <h2></h2>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Codigo</th>
+                            <th>Estado</th>
+                            <th>Modificar</th>
+                            <th>Borrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    
+                    </tbody>
+                </table>
+            </section>
+        </main>
+        
+    </div>
+    <div id="loading">
+        <img src="static/assets/loading.svg" alt="Loading Icon">
+    </div>
+</body>
+
+</html>
