@@ -20,7 +20,7 @@ function getPost (id) {
 
 function cargarBienvenida(){
     $.ajax({
-        url:"/micomanda/",
+        url:"/",
         type:"GET",
         success:function(data) {
             console.log(data);
