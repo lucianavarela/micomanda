@@ -31,7 +31,7 @@ function cargarBienvenida(){
 
 function traerInfo(tabla){
     $.ajax({
-        url:"/micomanda/"+tabla+"/",
+        url:"/"+tabla+"/",
         type:"GET",
         success:function(data) {
             console.log(data);
