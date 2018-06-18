@@ -20,7 +20,8 @@ function getPost (id) {
 
 function cargarBienvenida(){
     $.ajax({
-        url:"/",
+        url:"/micomanda/",
+        //url:"/",
         type:"GET",
         success:function(data) {
             console.log(data);
@@ -31,7 +32,8 @@ function cargarBienvenida(){
 
 function traerInfo(tabla){
     $.ajax({
-        url:"/"+tabla+"/",
+        url:"/micomanda/"+tabla+"/",
+        //url:"/"+tabla+"/",
         type:"GET",
         success:function(data) {
             console.log(data);
@@ -48,7 +50,7 @@ function cargarTabla(data, tabla) {
         ")'></th><th><input type='button' value='Eliminar' onclick='borrarArticulo("+data[i].id+")'></th></tr>";
     }
     $('#lista').show();
-    $('#lista h2').text(tabla);
+    $('#mensaje').text(tabla);
     $('#lista tbody').empty().html(table_content);
 }
 

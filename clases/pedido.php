@@ -7,7 +7,9 @@ class Pedido
     public $idEmpleado;
     public $descripcion;
     public $estado;
-    
+    public $fechaIngresado;
+    public $fechaEstimado;
+    public $fechaEntregado;
     
     public function GetIdComanda() {
         return $this->idComanda;

@@ -7,9 +7,6 @@ class Comanda
     public $importe;
     public $idMesa;
     public $foto;
-    public $fechaIngresado;
-    public $fechaEstimado;
-    public $fechaEntregado;
     
     public function GetNombreCliente() {
         return $this->nombreCliente;
