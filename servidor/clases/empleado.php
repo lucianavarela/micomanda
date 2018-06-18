@@ -93,6 +93,14 @@ class Empleado
         return $empleadoResultado;
     }
 
+    public static function ValidarEmpleado($email, $clave) {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados where usuario='$email' and clave='$clave'");
+        $consulta->execute();
+        $empleadoResultado= $consulta->fetchObject('Empleado');
+        return $empleadoResultado;
+    }
+
     public static function TomarPedido($id, $pedido, $tiempo) {
         $empleado=Empleado::TraerEmpleado($id);
         $empleado->estado = 'ocupado';

@@ -20,7 +20,7 @@ function getPost (id) {
 
 function cargarBienvenida(){
     $.ajax({
-        url:"/micomanda/",
+        url:"/micomanda/servidor/",
         //url:"/",
         type:"GET",
         success:function(data) {
@@ -32,7 +32,7 @@ function cargarBienvenida(){
 
 function traerInfo(tabla){
     $.ajax({
-        url:"/micomanda/"+tabla+"/",
+        url:"/micomanda/servidor/"+tabla+"/",
         //url:"/"+tabla+"/",
         type:"GET",
         success:function(data) {
