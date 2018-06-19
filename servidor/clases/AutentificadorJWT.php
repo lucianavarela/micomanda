@@ -1,5 +1,4 @@
 <?php
-require_once '../composer/vendor/autoload.php';
 use Firebase\JWT\JWT;
 class AutentificadorJWT
 {

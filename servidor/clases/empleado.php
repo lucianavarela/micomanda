@@ -95,7 +95,7 @@ class Empleado
 
     public static function ValidarEmpleado($email, $clave) {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados where usuario='$email' and clave='$clave'");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados where email='$email' and clave='$clave'");
         $consulta->execute();
         $empleadoResultado= $consulta->fetchObject('Empleado');
         return $empleadoResultado;

@@ -15,8 +15,6 @@ require_once './clases/comanda.php';
 require_once './clases/comandaApi.php';
 require_once './clases/empleado.php';
 require_once './clases/empleadoApi.php';
-require_once './clases/socio.php';
-require_once './clases/socioApi.php';
 require_once './clases/encuesta.php';
 require_once './clases/encuestaApi.php';
 require_once './clases/log.php';
@@ -26,10 +24,8 @@ $config['addContentLengthHeader'] = false;
 
 $app = new \Slim\App(["settings" => $config]);
 
-$app->get('/', \comandaApi::class . ':Saludo');
-
-$app->group('', function () use ($app) {
-  $this->post('/login/', \login::class . ':UserLogin');
+$app->post('/login/', \login::class . ':UserLogin');
+$app->group('/api', function () use ($app) {
   $this->group('/comanda', function () use ($app) {
     $this->get('/', \comandaApi::class . ':TraerTodos');
     $this->get('/{codigoMesa}/{codigoComanda}', \comandaApi::class . ':TraerUno');
@@ -54,13 +50,6 @@ $app->group('', function () use ($app) {
     $this->delete('/', \mozoApi::class . ':BorrarUno');
     $this->put('/', \mozoApi::class . ':ModificarUno');
   });
-  $app->group('/socio', function () use ($app) {
-    $this->get('/', \socioApi::class . ':TraerTodos');
-    $this->get('/{id}', \socioApi::class . ':TraerUno');
-    $this->post('/', \socioApi::class . ':CargarUno');
-    $this->delete('/', \socioApi::class . ':BorrarUno');
-    $this->put('/', \socioApi::class . ':ModificarUno');
-  });
   $app->group('/mesa', function () use ($app) {
     $this->get('/', \mesaApi::class . ':TraerTodos');
     $this->get('/{id}', \mesaApi::class . ':TraerUno');
@@ -69,7 +58,7 @@ $app->group('', function () use ($app) {
     $this->put('/', \mesaApi::class . ':ModificarUno');
   });
   $app->group('/pedido', function () use ($app) {
-    $this->get('/', \pedidoApi::class . ':TraerTodos');
+    $this->get('/', \pedidoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':VerificarToken')->add(\MWparaAutentificar::class . ':VerificarAdmin');
     $this->get('/{id}', \pedidoApi::class . ':TraerUno');
     $this->get('/pendientes/', \pedidoApi::class . ':TraerTodosPendientes');
     $this->get('/pendientes/{sector}', \pedidoApi::class . ':TraerPendientesSector');
