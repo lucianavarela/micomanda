@@ -106,4 +106,96 @@ class MWparaAutentificar
 
         return $response;
 	}
+
+	public function VerificarEmpleado($request, $response, $next) {
+		$sector = $request->getAttribute('sector');
+		if($sector == "management") {
+			$response = $next($request, $response);
+		}
+		else
+		{
+			$objDelaRespuesta->respuesta="Solo socios";
+		}
+        
+        if($objDelaRespuesta->respuesta!="") {
+			$nueva=$response->withJson($objDelaRespuesta, 401);
+			return $nueva;
+        }
+
+        return $response;
+	}
+
+	public function VerificarMozo($request, $response, $next) {
+		$sector = $request->getAttribute('sector');
+		if($sector == "management") {
+			$response = $next($request, $response);
+		}
+		else
+		{
+			$objDelaRespuesta->respuesta="Solo socios";
+		}
+        
+        if($objDelaRespuesta->respuesta!="") {
+			$nueva=$response->withJson($objDelaRespuesta, 401);
+			return $nueva;
+        }
+
+        return $response;
+	}
+	
+	public function FiltrarSueldos($request, $response, $next) {
+        
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="";
+		$objDelaRespuesta->esValido=false;
+		$arrayConToken = $request->getHeader('token');
+		if(sizeof($arrayConToken) > 0) {
+			$token=$arrayConToken[0];
+			try {
+				AutentificadorJWT::verificarToken($token);
+				$objDelaRespuesta->esValido=true;
+			} catch (Exception $e) {
+				$objDelaRespuesta->excepcion=$e->getMessage();
+				$objDelaRespuesta->esValido=false;
+			}
+		}
+
+		if($objDelaRespuesta->esValido) {
+			$payload=AutentificadorJWT::ObtenerData($token);
+			$response = $next($request, $response);
+			if($payload->sector != "management") {
+				$filtered_list = [];
+				foreach ($response->getBody() as $empleado) {
+					$empleado_filtrado = new stdclass();
+					$empleado_filtrado->email=$empleado->email;
+					$empleado_filtrado->clave=$empleado->clave;
+					$empleado_filtrado->sector=$empleado->sector;
+					$empleado_filtrado->estado=$empleado->estado;
+					$filtered_list[] = $empleado_filtrado;
+				}
+				$nueva=$response->withJson($filtered_list, 200);
+				return $nueva;
+			}
+		} else {
+			$response = $next($request, $response);
+			$filtered_list = [];
+			foreach ($response as $empleado) {
+				$empleado_filtrado = new stdclass();
+				$empleado_filtrado->email=$empleado->email;
+				$empleado_filtrado->clave=$empleado->clave;
+				$empleado_filtrado->sector=$empleado->sector;
+				$empleado_filtrado->estado=$empleado->estado;
+				$filtered_list[] = $empleado_filtrado;
+			}
+			$nueva=$response->withJson($filtered_list, 200);
+			return $nueva;
+		}
+        
+        if($objDelaRespuesta->respuesta!="") {
+			$nueva=$response->withJson($objDelaRespuesta, 401);
+			return $nueva;
+        }
+		
+        return $response;
+	}
 }

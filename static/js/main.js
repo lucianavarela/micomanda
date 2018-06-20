@@ -31,13 +31,19 @@ function cargarBienvenida(){
 }
 
 function traerInfo(tabla){
+    $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/"+tabla+"/",
         //url:"/api/"+tabla+"/",
         type:"GET",
         success:function(data) {
+            $('#loading').hide();
             console.log(data);
             cargarTabla(data, tabla);
+        },
+        error:function(data) {
+            $('#loading').hide();
+            alert('No tiene permisos para realizar esa operación');
         }
     })
 }

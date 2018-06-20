@@ -5,13 +5,13 @@ class empleadoApi extends Empleado implements IApiUsable
 {
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
-		$empleadoObj=Empleado::TraerEmpleado($id);
+		$empleadoObj = Empleado::TraerEmpleado($id);
 		$newResponse = $response->withJson($empleadoObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
-		$empleados=Empleado::TraerEmpleados();
+		$empleados = Empleado::TraerEmpleados();
 		$newResponse = $response->withJson($empleados, 200);  
 		return $newResponse;
 	}
@@ -44,6 +44,7 @@ class empleadoApi extends Empleado implements IApiUsable
 		$miempleado->email=$ArrayDeParametros['email'];
 		$miempleado->clave=$ArrayDeParametros['clave'];
 		$miempleado->sector=$ArrayDeParametros['sector'];
+		$miempleado->sueldo=$ArrayDeParametros['sueldo'];
 		$miempleado->estado='activo';
 		$miempleado->InsertarEmpleado();
 		$response->getBody()->write("Se ingreso el empleado!");
@@ -87,6 +88,9 @@ class empleadoApi extends Empleado implements IApiUsable
 		}
 		if(in_array('estado', $ArrayDeParametros)) {
 			$miempleado->estado=$ArrayDeParametros['estado'];
+		}
+		if(in_array('sueldo', $ArrayDeParametros)) {
+			$miempleado->estado=$ArrayDeParametros['sueldo'];
 		}
 		$miempleado->GuardarEmpleado();
 		$objDelaRespuesta->resultado="Empleado modificado!";

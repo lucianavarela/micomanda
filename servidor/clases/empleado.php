@@ -6,6 +6,7 @@ class Empleado
     public $clave;
     public $sector;
     public $estado;
+    public $sueldo;
     
     public function GetEmail() {
         return $this->email;
@@ -19,6 +20,9 @@ class Empleado
     public function GetEstado() {
         return $this->estado;
     }
+    public function GetSueldo() {
+        return $this->sueldo;
+    }
 
     public function SetEmail($value) {
         $this->email = $value;
@@ -30,13 +34,10 @@ class Empleado
         $this->sector = $value;
     }
     public function SetEstado($value) {
-        $estados = array("activo", "suspendido", "inactivo");
-        if (in_array($value, $estados)) {
-            $this->estado = $value;
-            return true;
-        } else {
-            return false;
-        }
+        $this->estado = $value;
+    }
+    public function SetSueldo($value) {
+        $this->sueldo = $value;
     }
     
     public function BorrarEmpleado() {
@@ -56,7 +57,8 @@ class Empleado
             set email='$this->email',
             clave='$this->clave',
             sector='$this->sector',
-            estado='$this->estado'
+            estado='$this->estado',
+            sueldo=$this->sueldo
             WHERE id=$this->id;");
         return $consulta->execute();
     }
@@ -64,8 +66,8 @@ class Empleado
     public function InsertarEmpleado() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("INSERT
-        into empleados (email,clave,sector,estado)
-        values('$this->email','$this->clave','$this->sector','$this->estado')");
+        into empleados (email,clave,sector,estado,sueldo)
+        values('$this->email','$this->clave','$this->sector','$this->estado',$this->sueldo)");
         $consulta->execute();
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }

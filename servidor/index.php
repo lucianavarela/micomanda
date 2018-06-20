@@ -30,16 +30,16 @@ $app->group('/api', function () use ($app) {
     $this->get('/', \comandaApi::class . ':TraerTodos');
     $this->get('/{codigoMesa}/{codigoComanda}', \comandaApi::class . ':TraerUno');
     $this->post('/', \comandaApi::class . ':CargarUno');
-    $this->post('/cancelar/{id}', \comandaApi::class . ':Cancelar');
+    $this->post('/cancelar/{id}', \comandaApi::class . ':Cancelar')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');;
     $this->delete('/', \comandaApi::class . ':BorrarUno');
     $this->put('/', \comandaApi::class . ':ModificarUno');
   });
   $app->group('/empleado', function () use ($app) {
-    $this->get('/', \empleadoApi::class . ':TraerTodos');
-    $this->get('/{id}', \empleadoApi::class . ':TraerUno');
-    $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido');
-    $this->post('/entregar_pedido', \empleadoApi::class . ':EntgarUnPedido');
+    $this->get('/', \empleadoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
+    $this->get('/{id}', \empleadoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
     $this->post('/', \empleadoApi::class . ':CargarUno');
+    $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');;
+    $this->post('/entregar_pedido', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');;
     $this->delete('/', \empleadoApi::class . ':BorrarUno');
     $this->put('/', \empleadoApi::class . ':ModificarUno');
   });
@@ -60,10 +60,10 @@ $app->group('/api', function () use ($app) {
   $app->group('/pedido', function () use ($app) {
     $this->get('/', \pedidoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->get('/{id}', \pedidoApi::class . ':TraerUno');
-    $this->get('/pendientes/', \pedidoApi::class . ':TraerTodosPendientes');
-    $this->get('/pendientes/{sector}', \pedidoApi::class . ':TraerPendientesSector');
-    $this->get('/listos/', \pedidoApi::class . ':TraerTodosListos');
-    $this->post('/', \pedidoApi::class . ':CargarUno');
+    $this->get('/pendientes/', \pedidoApi::class . ':TraerTodosPendientes')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');;
+    $this->get('/pendientes/{sector}', \pedidoApi::class . ':TraerPendientesSector')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->get('/listos/', \pedidoApi::class . ':TraerTodosListos')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/', \pedidoApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->delete('/', \pedidoApi::class . ':BorrarUno');
     $this->put('/', \pedidoApi::class . ':ModificarUno');
   });
