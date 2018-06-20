@@ -72,13 +72,24 @@ class empleadoApi extends Empleado implements IApiUsable
 		
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$miempleado = new Empleado();
-		$miempleado->id=$ArrayDeParametros['id'];
-		$miempleado->email=$ArrayDeParametros['email'];
-		$miempleado->clave=$ArrayDeParametros['clave'];
-		$miempleado->sector=$ArrayDeParametros['sector'];
-		$miempleado->estado=$ArrayDeParametros['estado'];
-		$resultado =$miempleado->ModificarEmpleado();
+		print("...............................................");
+		var_dump($ArrayDeParametros);
+		print("...............................................");
+		//$miempleado = Empleado::TraerEmpleado($ArrayDeParametros['id']);
+		if(in_array('email', $ArrayDeParametros)) {
+			$miempleado->email=$ArrayDeParametros['email'];
+		}
+		if(in_array('clave', $ArrayDeParametros)) {
+			$miempleado->clave=$ArrayDeParametros['clave'];
+		}
+		if(in_array('sector', $ArrayDeParametros)) {
+			$miempleado->sector=$ArrayDeParametros['sector'];
+		}
+		if(in_array('estado', $ArrayDeParametros)) {
+			$miempleado->estado=$ArrayDeParametros['estado'];
+		}
+		$miempleado->GuardarEmpleado();
+		$objDelaRespuesta->resultado="Empleado modificado!";
 		return $response->withJson($objDelaRespuesta, 200);		
 	}
 }

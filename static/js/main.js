@@ -21,7 +21,7 @@ function getPost (id) {
 function cargarBienvenida(){
     $.ajax({
         url:"/micomanda/servidor/",
-        //url:"/",
+        //url:"/api/",
         type:"GET",
         success:function(data) {
             console.log(data);
@@ -32,8 +32,8 @@ function cargarBienvenida(){
 
 function traerInfo(tabla){
     $.ajax({
-        url:"/micomanda/servidor/"+tabla+"/",
-        //url:"/"+tabla+"/",
+        url:"/micomanda/servidor/api/"+tabla+"/",
+        //url:"/api/"+tabla+"/",
         type:"GET",
         success:function(data) {
             console.log(data);

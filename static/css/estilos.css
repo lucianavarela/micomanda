@@ -241,3 +241,21 @@ footer p {
 .is-70-box.boton{
     background-color: #be0081!important;
 }
+
+#login {
+    position: absolute;
+    z-index: 999;
+    right: 1rem;
+    top: 1rem;
+    background-color: #eda400;
+    padding: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#login a {
+    position: relative;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
