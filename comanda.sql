@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-06-2018 a las 21:24:48
+-- Tiempo de generación: 20-06-2018 a las 23:38:08
 -- Versión del servidor: 10.1.31-MariaDB
 -- Versión de PHP: 5.6.35
 
@@ -59,16 +59,18 @@ CREATE TABLE `empleados` (
   `email` varchar(50) COLLATE utf8_spanish2_ci NOT NULL,
   `clave` varchar(50) COLLATE utf8_spanish2_ci NOT NULL,
   `sector` varchar(50) COLLATE utf8_spanish2_ci NOT NULL,
-  `estado` varchar(50) COLLATE utf8_spanish2_ci NOT NULL
+  `estado` varchar(50) COLLATE utf8_spanish2_ci NOT NULL,
+  `sueldo` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `email`, `clave`, `sector`, `estado`) VALUES
-(1, 'lvarela@mail.com', '1234578', 'cocina', 'activo'),
-(2, 'lvarela@mail.com', '1234578', 'barra', 'ocupado');
+INSERT INTO `empleados` (`id`, `email`, `clave`, `sector`, `estado`, `sueldo`) VALUES
+(1, 'lvarela@mail.com', '1234578', 'cocina', 'activo', 1000),
+(2, 'lvarela@mail.com', '1234578', 'barra', 'ocupado', 1500),
+(3, 'adrimail', '123', 'management', 'activo', 15000);
 
 -- --------------------------------------------------------
 
@@ -130,7 +132,8 @@ INSERT INTO `pedidos` (`id`, `idComanda`, `sector`, `idEmpleado`, `descripcion`,
 (4, 'hoh7h', 'cocina', 1, '3 pizzas', 'entregado'),
 (5, 'tghnp', 'barra', 2, '1 cerveza', 'en preparación'),
 (6, 'tghnp', 'cocina', 1, '2 empanadas', 'entregado'),
-(7, '', '', NULL, '', '');
+(7, '', '', NULL, '', ''),
+(8, '', '', NULL, '', '');
 
 --
 -- Índices para tablas volcadas
@@ -174,7 +177,7 @@ ALTER TABLE `comandas`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `mesas`
@@ -186,7 +189,7 @@ ALTER TABLE `mesas`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
