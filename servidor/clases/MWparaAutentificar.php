@@ -159,35 +159,57 @@ class MWparaAutentificar
 				$objDelaRespuesta->esValido=false;
 			}
 		}
-
 		if($objDelaRespuesta->esValido) {
 			$payload=AutentificadorJWT::ObtenerData($token);
 			$response = $next($request, $response);
 			if($payload->sector != "management") {
-				$filtered_list = [];
-				foreach ($response->getBody() as $empleado) {
+				$empleados = json_decode($response->getBody()->__toString());
+				if (is_array($empleados)) {
+					$filtered = [];
+					foreach ($empleados as $empleado) {	
+						$empleado_filtrado = new stdclass();
+						$empleado_filtrado->id=$empleado->id;
+						$empleado_filtrado->email=$empleado->email;
+						$empleado_filtrado->clave=$empleado->clave;
+						$empleado_filtrado->sector=$empleado->sector;
+						$empleado_filtrado->estado=$empleado->estado;
+						$filtered_list[] = $empleado_filtrado;
+					}
+				} else {
+					$filtered = new stdclass();
+					$filtered->id=$empleados->id;
+					$filtered->email=$empleados->email;
+					$filtered->clave=$empleados->clave;
+					$filtered->sector=$empleados->sector;
+					$filtered->estado=$empleados->estado;
+				}
+				$nueva=$response->withJson($filtered, 200);
+				return $nueva;
+			}
+		} else {
+			$response = $next($request, $response);
+			$filtered = [];
+			$empleados = json_decode($response->getBody()->__toString());
+			if (is_array($empleados)) {
+				$filtered = [];
+				foreach ($empleados as $empleado) {	
 					$empleado_filtrado = new stdclass();
+					$empleado_filtrado->id=$empleado->id;
 					$empleado_filtrado->email=$empleado->email;
 					$empleado_filtrado->clave=$empleado->clave;
 					$empleado_filtrado->sector=$empleado->sector;
 					$empleado_filtrado->estado=$empleado->estado;
 					$filtered_list[] = $empleado_filtrado;
 				}
-				$nueva=$response->withJson($filtered_list, 200);
-				return $nueva;
+			} else {
+				$filtered = new stdclass();
+				$filtered->id=$empleados->id;
+				$filtered->email=$empleados->email;
+				$filtered->clave=$empleados->clave;
+				$filtered->sector=$empleados->sector;
+				$filtered->estado=$empleados->estado;
 			}
-		} else {
-			$response = $next($request, $response);
-			$filtered_list = [];
-			foreach ($response as $empleado) {
-				$empleado_filtrado = new stdclass();
-				$empleado_filtrado->email=$empleado->email;
-				$empleado_filtrado->clave=$empleado->clave;
-				$empleado_filtrado->sector=$empleado->sector;
-				$empleado_filtrado->estado=$empleado->estado;
-				$filtered_list[] = $empleado_filtrado;
-			}
-			$nueva=$response->withJson($filtered_list, 200);
+			$nueva=$response->withJson($filtered, 200);
 			return $nueva;
 		}
         
@@ -196,6 +218,6 @@ class MWparaAutentificar
 			return $nueva;
         }
 		
-        return $response;
+        //return $response;
 	}
 }
