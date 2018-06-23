@@ -29,57 +29,51 @@ $app->group('/api', function () use ($app) {
   $this->group('/comanda', function () use ($app) {
     $this->get('/', \comandaApi::class . ':TraerTodos');
     $this->get('/{codigoMesa}/{codigoComanda}', \comandaApi::class . ':TraerUno');
-    $this->post('/', \comandaApi::class . ':CargarUno');
-    $this->post('/cancelar/{id}', \comandaApi::class . ':Cancelar')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');;
-    $this->delete('/', \comandaApi::class . ':BorrarUno');
-    $this->put('/', \comandaApi::class . ':ModificarUno');
+    $this->post('/', \comandaApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/cancelar/{id}', \comandaApi::class . ':Cancelar')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->delete('/{id}', \comandaApi::class . ':BorrarUno');
+    $this->put('/{id}', \comandaApi::class . ':ModificarUno');
   });
   $app->group('/empleado', function () use ($app) {
     $this->get('/', \empleadoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
     $this->get('/{id}', \empleadoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
     $this->post('/', \empleadoApi::class . ':CargarUno');
-    $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');;
-    $this->post('/entregar_pedido', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');;
-    $this->delete('/', \empleadoApi::class . ':BorrarUno');
-    $this->put('/', \empleadoApi::class . ':ModificarUno');
-  });
-  $app->group('/mozo', function () use ($app) {
-    $this->get('/', \mozoApi::class . ':TraerTodos');
-    $this->get('/{id}', \mozoApi::class . ':TraerUno');
-    $this->post('/', \mozoApi::class . ':CargarUno');
-    $this->delete('/', \mozoApi::class . ':BorrarUno');
-    $this->put('/', \mozoApi::class . ':ModificarUno');
+    $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/entregar_pedido', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->delete('/{id}', \empleadoApi::class . ':BorrarUno');
+    $this->put('/{id}', \empleadoApi::class . ':ModificarUno');
   });
   $app->group('/mesa', function () use ($app) {
     $this->get('/', \mesaApi::class . ':TraerTodos');
     $this->get('/{id}', \mesaApi::class . ':TraerUno');
     $this->post('/', \mesaApi::class . ':CargarUno');
-    $this->delete('/', \mesaApi::class . ':BorrarUno');
-    $this->put('/', \mesaApi::class . ':ModificarUno');
+    $this->delete('/{id}', \mesaApi::class . ':BorrarUno');
+    $this->put('/{id}', \mesaApi::class . ':ModificarUno');
   });
   $app->group('/pedido', function () use ($app) {
-    $this->get('/', \pedidoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
-    $this->get('/{id}', \pedidoApi::class . ':TraerUno');
-    $this->get('/pendientes/', \pedidoApi::class . ':TraerTodosPendientes')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');;
+    $this->get('/', \pedidoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':FiltrarPedidos')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->get('/{id}', \pedidoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarPedidos')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->get('/pendientes/', \pedidoApi::class . ':TraerTodosPendientes')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->get('/pendientes/{sector}', \pedidoApi::class . ':TraerPendientesSector')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->get('/listos/', \pedidoApi::class . ':TraerTodosListos')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/', \pedidoApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
-    $this->delete('/', \pedidoApi::class . ':BorrarUno');
-    $this->put('/', \pedidoApi::class . ':ModificarUno');
+    $this->post('/entregar_pedido/{id}', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->delete('/{id}', \pedidoApi::class . ':BorrarUno');
+    $this->put('/{id}', \pedidoApi::class . ':ModificarUno');
   });
   $app->group('/encuesta', function () use ($app) {
     $this->get('/', \encuestaApi::class . ':TraerTodos');
     $this->get('/{id}', \encuestaApi::class . ':TraerUno');
     $this->post('/', \encuestaApi::class . ':CargarUno');
-    $this->delete('/', \encuestaApi::class . ':BorrarUno');
-    $this->put('/', \encuestaApi::class . ':ModificarUno');
+    $this->delete('/{id}', \encuestaApi::class . ':BorrarUno');
+    $this->put('/{id}', \encuestaApi::class . ':ModificarUno');
   });
   $app->group('/log', function () use ($app) {
     $this->get('/', \logApi::class . ':TraerTodos');
     $this->get('/{id}', \logApi::class . ':TraerUno');
     $this->post('/', \logApi::class . ':CargarUno');
-    $this->delete('/', \logApi::class . ':BorrarUno');
-    $this->put('/', \logApi::class . ':ModificarUno');
+    $this->delete('/{id}', \logApi::class . ':BorrarUno');
+    $this->put('/{id}', \logApi::class . ':ModificarUno');
   });
 })->add(\MWparaAutentificar::class . ':VerificarUsuario');
 

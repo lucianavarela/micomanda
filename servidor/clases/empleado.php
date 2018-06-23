@@ -2,14 +2,14 @@
 class Empleado
 {
     public $id;
-    public $email;
+    public $usuario;
     public $clave;
     public $sector;
     public $estado;
     public $sueldo;
     
-    public function GetEmail() {
-        return $this->email;
+    public function GetUsuario() {
+        return $this->usuario;
     }
     public function GetClave() {
         return $this->clave;
@@ -24,8 +24,8 @@ class Empleado
         return $this->sueldo;
     }
 
-    public function SetEmail($value) {
-        $this->email = $value;
+    public function SetUsuario($value) {
+        $this->usuario = $value;
     }
     public function SetClave($value) {
         $this->clave = $value;
@@ -54,7 +54,7 @@ class Empleado
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("
             update empleados 
-            set email='$this->email',
+            set usuario='$this->usuario',
             clave='$this->clave',
             sector='$this->sector',
             estado='$this->estado',
@@ -66,14 +66,14 @@ class Empleado
     public function InsertarEmpleado() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("INSERT
-        into empleados (email,clave,sector,estado,sueldo)
-        values('$this->email','$this->clave','$this->sector','$this->estado',$this->sueldo)");
+        into empleados (usuario,clave,sector,estado,sueldo)
+        values('$this->usuario','$this->clave','$this->sector','$this->estado',$this->sueldo)");
         $consulta->execute();
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }
 
     public function GuardarEmpleado() {
-        if ($this->id >= 0) {
+        if ($this->id > 0) {
             $this->ModificarEmpleado();
         } else {
             $this->InsertarEmpleado();
@@ -95,9 +95,9 @@ class Empleado
         return $empleadoResultado;
     }
 
-    public static function ValidarEmpleado($email, $clave) {
+    public static function ValidarEmpleado($usuario, $clave) {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados where email='$email' and clave='$clave'");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados where usuario='$usuario' and clave='$clave'");
         $consulta->execute();
         $empleadoResultado= $consulta->fetchObject('Empleado');
         return $empleadoResultado;
@@ -108,7 +108,8 @@ class Empleado
         $empleado->estado = 'ocupado';
         $empleado->GuardarEmpleado();
         $pedido = Pedido::TraerPedido($pedido);
-        $pedido->SetIdEmpleado($empleado->id);
+        $pedido->SetIdEmpleado($tiempo);
+        $pedido->SetEstimacion($empleado->id);
         $pedido->estado = 'en preparación';
         $pedido->GuardarPedido();
         return "Se le ha asignado el pedido para la comanda #".$pedido->GetIdComanda().
@@ -128,6 +129,6 @@ class Empleado
     }
 
     public function toString() {
-        return "Metodo mostar:".$this->email."  ".$this->clave."  ".$this->sector;
+        return "Metodo mostar:".$this->usuario."  ".$this->clave."  ".$this->sector;
     }
 }

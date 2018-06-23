@@ -77,7 +77,7 @@ class MWparaAutentificar
 			$request = $request->withAttribute('sector', $payload->sector);
 			$response = $next($request, $response);
 		} else {
-			$objDelaRespuesta->respuesta="Rechazado!";
+			$objDelaRespuesta->respuesta="Por favor logueese para realizar esta accion!";
 			$objDelaRespuesta->elToken=$token;
 		}
         
@@ -90,6 +90,8 @@ class MWparaAutentificar
 	}
 
 	public function VerificarAdmin($request, $response, $next) {
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="";
 		$sector = $request->getAttribute('sector');
 		if($sector == "management") {
 			$response = $next($request, $response);
@@ -108,13 +110,15 @@ class MWparaAutentificar
 	}
 
 	public function VerificarEmpleado($request, $response, $next) {
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="";
 		$sector = $request->getAttribute('sector');
-		if($sector == "management") {
+		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
 			$response = $next($request, $response);
 		}
 		else
 		{
-			$objDelaRespuesta->respuesta="Solo socios";
+			$objDelaRespuesta->respuesta="Solo empleados";
 		}
         
         if($objDelaRespuesta->respuesta!="") {
@@ -126,13 +130,15 @@ class MWparaAutentificar
 	}
 
 	public function VerificarMozo($request, $response, $next) {
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="";
 		$sector = $request->getAttribute('sector');
-		if($sector == "management") {
+		if($sector == "mozo") {
 			$response = $next($request, $response);
 		}
 		else
 		{
-			$objDelaRespuesta->respuesta="Solo socios";
+			$objDelaRespuesta->respuesta="Solo mozos";
 		}
         
         if($objDelaRespuesta->respuesta!="") {
@@ -144,7 +150,6 @@ class MWparaAutentificar
 	}
 	
 	public function FiltrarSueldos($request, $response, $next) {
-        
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
 		$objDelaRespuesta->esValido=false;
@@ -165,51 +170,26 @@ class MWparaAutentificar
 			if($payload->sector != "management") {
 				$empleados = json_decode($response->getBody()->__toString());
 				if (is_array($empleados)) {
-					$filtered = [];
-					foreach ($empleados as $empleado) {	
-						$empleado_filtrado = new stdclass();
-						$empleado_filtrado->id=$empleado->id;
-						$empleado_filtrado->email=$empleado->email;
-						$empleado_filtrado->clave=$empleado->clave;
-						$empleado_filtrado->sector=$empleado->sector;
-						$empleado_filtrado->estado=$empleado->estado;
-						$filtered_list[] = $empleado_filtrado;
+					foreach ($empleados as $empleado) {
+						unset($empleado->sueldo);
 					}
 				} else {
-					$filtered = new stdclass();
-					$filtered->id=$empleados->id;
-					$filtered->email=$empleados->email;
-					$filtered->clave=$empleados->clave;
-					$filtered->sector=$empleados->sector;
-					$filtered->estado=$empleados->estado;
+					unset($empleados->sueldo);
 				}
-				$nueva=$response->withJson($filtered, 200);
+				$nueva=$response->withJson($empleados, 200);
 				return $nueva;
 			}
 		} else {
 			$response = $next($request, $response);
-			$filtered = [];
 			$empleados = json_decode($response->getBody()->__toString());
 			if (is_array($empleados)) {
-				$filtered = [];
-				foreach ($empleados as $empleado) {	
-					$empleado_filtrado = new stdclass();
-					$empleado_filtrado->id=$empleado->id;
-					$empleado_filtrado->email=$empleado->email;
-					$empleado_filtrado->clave=$empleado->clave;
-					$empleado_filtrado->sector=$empleado->sector;
-					$empleado_filtrado->estado=$empleado->estado;
-					$filtered_list[] = $empleado_filtrado;
+				foreach ($empleados as $empleado) {
+					unset($empleado->sueldo);
 				}
 			} else {
-				$filtered = new stdclass();
-				$filtered->id=$empleados->id;
-				$filtered->email=$empleados->email;
-				$filtered->clave=$empleados->clave;
-				$filtered->sector=$empleados->sector;
-				$filtered->estado=$empleados->estado;
+				unset($empleados->sueldo);
 			}
-			$nueva=$response->withJson($filtered, 200);
+			$nueva=$response->withJson($empleados, 200);
 			return $nueva;
 		}
         
@@ -218,6 +198,41 @@ class MWparaAutentificar
 			return $nueva;
         }
 		
-        //return $response;
+        return $response;
+	}
+	
+	public function FiltrarPedidos($request, $response, $next) {
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="";
+		$sector = $request->getAttribute('sector');
+		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
+			$response = $next($request, $response);
+			$pedidos = json_decode($response->getBody()->__toString());
+			if (is_array($pedidos)) {
+				foreach ($pedidos as $key => $pedido) {
+					if ($pedido->sector != $sector) {
+						unset($pedidos[$key]);
+					}
+				}
+			} else {
+				if ($pedidos->sector != $sector) {
+					$pedidos = [];
+				}
+			}
+			$nueva=$response->withJson($pedidos, 200);
+			return $nueva;
+		} else if($sector == "management") {
+			$response = $next($request, $response);
+			return $response;
+		} else {
+			$objDelaRespuesta->respuesta="Solo usuarios";
+		}
+        
+        if($objDelaRespuesta->respuesta!="") {
+			$nueva=$response->withJson($objDelaRespuesta, 401);
+			return $nueva;
+        }
+
+        return $response;
 	}
 }

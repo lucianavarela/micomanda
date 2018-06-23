@@ -2,28 +2,28 @@
 class Log
 {
     public $id;
-    public $param1;
-    public $param2;
-    public $param3;
+    public $idEmpleado;
+    public $fecha;
+    public $accion;
     
-    public function GetParam1() {
-        return $this->param1;
+    public function GetIdEmpleado() {
+        return $this->idEmpleado;
     }
-    public function GetParam2() {
-        return $this->param2;
+    public function GetFecha() {
+        return $this->fecha;
     }
-    public function GetParam3() {
-        return $this->param3;
+    public function GetAccion() {
+        return $this->accion;
     }
 
-    public function SetParam1($value) {
-        $this->param1 = $value;
+    public function SetIdEmpleado($value) {
+        $this->idEmpleado = $value;
     }
-    public function SetParam2($value) {
-        $this->param2 = $value;
+    public function SetFecha($value) {
+        $this->fecha = $value;
     }
-    public function SetParam3($value) {
-        $this->param3 = $value;
+    public function SetAccion($value) {
+        $this->accion = $value;
     }
     
     public function BorrarLog() {
@@ -40,22 +40,22 @@ class Log
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("
             update logs 
-            set param1='$this->param1',
-            param2='$this->param2',
-            param3='$this->param3'
+            set idEmpleado='$this->idEmpleado',
+            fecha='$this->fecha',
+            accion='$this->accion'
             WHERE id=$this->id");
         return $consulta->execute();
     }
 
     public function InsertarLog() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into logs (param1,param2,param3)values('$this->param1','$this->param2','$this->param3')");
+        $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into logs (idEmpleado,fecha,accion)values('$this->idEmpleado','$this->fecha','$this->accion')");
         $consulta->execute();
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }
 
     public function GuardarLog() {
-        if ($this->id >= 0) {
+        if ($this->id > 0) {
             $this->ModificarLog();
         } else {
             $this->InsertarLog();
@@ -64,20 +64,20 @@ class Log
 
     public static function TraerLogs() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select id,param1 as param1, param2 as param2,param3 as param3 from logs");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select id,idEmpleado as idEmpleado, fecha as fecha,accion as accion from logs");
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Log");
     }
 
     public static function TraerLog($id) {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select id, param1 as param1, param2 as param2,param3 as param3 from logs where id = $id");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select id, idEmpleado as idEmpleado, fecha as fecha,accion as accion from logs where id = $id");
         $consulta->execute();
         $logResultado= $consulta->fetchObject('Log');
         return $logResultado;
     }
 
     public function toString() {
-        return "Metodo mostar:".$this->param1."  ".$this->param2."  ".$this->param3;
+        return "Metodo mostar:".$this->idEmpleado."  ".$this->fecha."  ".$this->accion;
     }
 }

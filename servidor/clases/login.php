@@ -3,12 +3,19 @@ class Login
 {
     public static function UserLogin($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-        $empleado = Empleado::ValidarEmpleado($ArrayDeParametros['email'], $ArrayDeParametros['clave']);
+        $empleado = Empleado::ValidarEmpleado($ArrayDeParametros['usuario'], $ArrayDeParametros['clave']);
         if($empleado) {
             $token = AutentificadorJWT::CrearToken($empleado);
-            return $response->getBody()->write("Bienvenido! $token");;
+            $objDelaRespuesta = array(
+                'token'=>$token,
+                'usuario' => $ArrayDeParametros['usuario']
+            );
+            return $response->withJson($objDelaRespuesta, 200);
         } else {
-            return $response->getBody()->write("Usuario inexistente.");
+            $objDelaRespuesta = array(
+                'respuesta'=>'Usuario inexistente'
+            );
+            return $response->withJson($objDelaRespuesta, 401);
         }
     }
 }

@@ -57,18 +57,13 @@ class encuestaApi extends Encuesta implements IApiUsable
 	}
 		
 	public function ModificarUno($request, $response, $args) {
-		//$response->getBody()->write("<h1>Modificar  uno</h1>");
 		$ArrayDeParametros = $request->getParsedBody();
-		//var_dump($ArrayDeParametros);    	
 		$miencuesta = new Encuesta();
 		$miencuesta->id=$ArrayDeParametros['id'];
 		$miencuesta->param1=$ArrayDeParametros['param1'];
 		$miencuesta->param2=$ArrayDeParametros['param2'];
 		$miencuesta->param3=$ArrayDeParametros['param3'];
-		$resultado =$miencuesta->ModificarEncuesta();
-		$objDelaRespuesta= new stdclass();
-		//var_dump($resultado);
-		$objDelaRespuesta->resultado=$resultado;
-		return $response->withJson($objDelaRespuesta, 200);		
+		$miencuesta->GuardarEncuesta();
+		return $response->withJson($miencuesta, 200);		
 	}
 }

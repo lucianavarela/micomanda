@@ -7,9 +7,6 @@ class Comanda
     public $importe;
     public $idMesa;
     public $foto;
-    public $fechaIngresado;
-    public $fechaEstimado;
-    public $fechaEntregado;
     
     public function GetNombreCliente() {
         return $this->nombreCliente;
@@ -26,16 +23,6 @@ class Comanda
     public function GetFoto() {
         return $this->foto;
     }
-    public function GetFechaIngresado() {
-        return $this->fechaIngresado;
-    }
-    public function GetFechaEstimado() {
-        return $this->fechaEstimado;
-    }
-    public function GetFechaEntregado() {
-        return $this->fechaEntregado;
-    }
-
     public function SetNombreCliente($value) {
         $this->nombreCliente = $value;
     }
@@ -60,15 +47,6 @@ class Comanda
     }
     public function SetFoto($value) {
         $this->foto = $value;
-    }
-    public function SetFechaIngresado($value) {
-        $this->fechaIngresado = $value;
-    }
-    public function SetFechaEstimado($value) {
-        $this->fechaEstimado = $value;
-    }
-    public function SetFechaEntregado($value) {
-        $this->fechaEntregado = $value;
     }
 
     public function __construct(){}
@@ -105,16 +83,13 @@ class Comanda
             codigo='$this->codigo',
             importe='$this->importe',
             idMesa='$this->idMesa',
-            foto='$this->foto',
-            fechaIngresado='$this->fechaIngresado',
-            fechaEstimado='$this->fechaEstimado',
-            fechaEntregado='$this->fechaEntregado'
+            foto='$this->foto'
             WHERE id=$this->id;");
         return $consulta->execute();
     }
 
     public function GuardarComanda() {
-        if ($this->id >= 0) {
+        if ($this->id > 0) {
             $this->ModificarComanda();
         } else {
             $codigo = $this->InsertarComanda();

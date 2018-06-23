@@ -7,6 +7,9 @@ class Pedido
     public $idEmpleado;
     public $descripcion;
     public $estado;
+    public $estimacion;
+    public $fechaIngresado;
+    public $fechaEntregado;
     
     
     public function GetIdComanda() {
@@ -24,6 +27,15 @@ class Pedido
     public function GetEstado() {
         return $this->estado;
     }
+    public function GetFechaIngresado() {
+        return $this->fechaIngresado;
+    }
+    public function GetEstimacion() {
+        return $this->estimacion;
+    }
+    public function GetFechaEntregado() {
+        return $this->fechaEntregado;
+    }
 
     public function SetIdComanda($value) {
         $this->idComanda = $value;
@@ -38,13 +50,16 @@ class Pedido
         $this->descripcion = $value;
     }
     public function SetEstado($value) {
-        $estados = array("pendiente", "en preparación", "listo para servir", "cerrado", "cancelado");
-        if (in_array($value, $estados)) {
-            $this->estado = $value;
-            return true;
-        } else {
-            return false;
-        }
+        $this->estado = $value;
+    }
+    public function SetFechaIngresado($value) {
+        $this->fechaIngresado = $value;
+    }
+    public function SetEstimacion($value) {
+        $this->estimacion = $value;
+    }
+    public function SetFechaEntregado($value) {
+        $this->fechaEntregado = $value;
     }
     
     public function BorrarPedido() {
@@ -65,36 +80,43 @@ class Pedido
             idComanda='$this->idComanda',
             idEmpleado=$this->idEmpleado,
             descripcion='$this->descripcion',
-            estado='$this->estado'
+            estado='$this->estado',
+            estimacion='$this->estimacion',
+            fechaIngresado='$this->fechaIngresado',
+            fechaEntregado='$this->fechaEntregado'
             WHERE id=$this->id");
         return $consulta->execute();
     }
 
     public static function CargarPedidos($arrayComanda, $comanda) {
-        if (array_key_exists('barra', $arrayComanda)) {
+        if ($arrayComanda['barra'] != '') {
             $pedido_nuevo = new Pedido();
             $pedido_nuevo->sector = 'barra';
+            $pedido_nuevo->estado = 'pendiente';
             $pedido_nuevo->idComanda = $comanda;
             $pedido_nuevo->descripcion = $arrayComanda['barra'];
             $pedido_nuevo->InsertarPedido();
         }
-        if (array_key_exists('cerveza', $arrayComanda)) {
+        if ($arrayComanda['cerveza'] != '') {
             $pedido_nuevo = new Pedido();
             $pedido_nuevo->sector = 'cerveza';
+            $pedido_nuevo->estado = 'pendiente';
             $pedido_nuevo->idComanda = $comanda;
             $pedido_nuevo->descripcion = $arrayComanda['cerveza'];
             $pedido_nuevo->InsertarPedido();
         }
-        if (array_key_exists('cocina', $arrayComanda)) {
+        if ($arrayComanda['cocina'] != '') {
             $pedido_nuevo = new Pedido();
             $pedido_nuevo->sector = 'cocina';
+            $pedido_nuevo->estado = 'pendiente';
             $pedido_nuevo->idComanda = $comanda;
             $pedido_nuevo->descripcion = $arrayComanda['cocina'];
             $pedido_nuevo->InsertarPedido();
         }
-        if (array_key_exists('candy', $arrayComanda)) {
+        if ($arrayComanda['candy'] != '') {
             $pedido_nuevo = new Pedido();
             $pedido_nuevo->sector = 'candy';
+            $pedido_nuevo->estado = 'pendiente';
             $pedido_nuevo->idComanda = $comanda;
             $pedido_nuevo->descripcion = $arrayComanda['candy'];
             $pedido_nuevo->InsertarPedido();
@@ -103,17 +125,18 @@ class Pedido
     }
 
     public function InsertarPedido() {
-        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $datetime_now = date("Y-m-d H:i:s");
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
         $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into pedidos
-        (sector,descripcion,idComanda,estado)values
-        ('$this->sector','$this->descripcion','$this->idComanda','$this->estado')"
+        (sector,descripcion,idComanda,estado,fechaIngresado)values
+        ('$this->sector','$this->descripcion','$this->idComanda','$this->estado','$datetime_now')"
         );
         $consulta->execute();
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }
 
     public function GuardarPedido() {
-        if ($this->id >= 0) {
+        if ($this->id > 0) {
             $this->ModificarPedido();
         } else {
             $this->InsertarPedido();

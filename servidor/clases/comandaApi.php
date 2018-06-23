@@ -2,10 +2,6 @@
 
 class comandaApi extends Comanda implements IApiUsable
 {
-	public function Saludo($request, $response, $args) {
-		$newResponse = $response->getBody()->write("Bienvenido!");
-	}
-
 	public function TraerUno($request, $response, $args) {
 		$codigoComanda=$args['codigoComanda'];
 		$codigoMesa=$args['codigoMesa'];
@@ -14,12 +10,16 @@ class comandaApi extends Comanda implements IApiUsable
 			if ($comanda->GetIdMesa() == $codigoMesa) {
 				$newResponse = $response->withJson($comanda, 200);  
 			} else {
-				$newResponse = $response->getBody()->write("Id de Mesa incorrecto para esta comanda.");
+				$newResponse = array(
+					'respuesta'=>"Id de Mesa incorrecto para esta comanda."
+				);
 			}
 		} else {
-			$newResponse = $response->getBody()->write("Comanda inexistente.");
+			$newResponse = array(
+				'respuesta'=>"Comanda inexistente."
+			);
 		}
-		return $newResponse;
+		return $response->withJson($newResponse, 401);
 	}
 
 	public function TraerTodos($request, $response, $args) {
@@ -51,21 +51,26 @@ class comandaApi extends Comanda implements IApiUsable
 				if (sizeof($archivos)) {
 					$archivos['foto']->moveTo($destino.$codigo.".".$extension[0]);		
 				}
-				$response->getBody()->write("Su comanda ha sido ingresada! Codigo de seguimiento: $codigo");
-				return $response;
+				$objDelaRespuesta = array(
+					'respuesta'=>"Su comanda ha sido ingresada! Codigo de seguimiento: $codigo"
+				);
+				return $response->withJson($objDelaRespuesta, 200);
 			} else {
-				$response->getBody()->write("Su comanda ha sido ingresada, pero no se han podido cargar los pedidos de esta comanda (faltan campos)");
-				return $response;
+				$objDelaRespuesta = array(
+					'respuesta'=>'Su comanda ha sido ingresada, pero no se han podido cargar los pedidos de esta comanda (faltan campos)'
+				);
 			}
 		} else {
-			$response->getBody()->write("Esta mesa no está cargada en el sistema o está ocupada.");
-			return $response;
+			$objDelaRespuesta = array(
+				'respuesta'=>"Esta mesa no está cargada en el sistema o está ocupada."
+			);
 		}
+		return $response->withJson($objDelaRespuesta, 401);
 	}
 
 	public function BorrarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$id=$ArrayDeParametros['id'];
+		$id=$args['id'];
 		$comanda= new Comanda();
 		$comanda->id=$id;
 		$cantidadDeBorrados=$comanda->BorrarComanda();
@@ -86,18 +91,13 @@ class comandaApi extends Comanda implements IApiUsable
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$micomanda = new Comanda();
-		$micomanda->id=$ArrayDeParametros['id'];
+		$micomanda->id=$args['id'];
 		$micomanda->nombreCliente=$ArrayDeParametros['nombreCliente'];
 		$micomanda->codigo=$ArrayDeParametros['codigo'];
 		$micomanda->importe=$ArrayDeParametros['importe'];
 		$micomanda->idMesa=$ArrayDeParametros['idMesa'];
 		$micomanda->foto=$ArrayDeParametros['foto'];
-		$micomanda->fechaIngresado=$ArrayDeParametros['fechaIngresado'];
-		$micomanda->fechaEstimado=$ArrayDeParametros['fechaEstimado'];
-		$micomanda->fechaEntregado=$ArrayDeParametros['fechaEntregado'];
-		$resultado =$micomanda->ModificarComanda();
-		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->resultado=$resultado;
-		return $response->withJson($objDelaRespuesta, 200);		
+		$micomanda->GuardarComanda();
+		return $response->withJson($micomanda, 200);		
 	}
 }

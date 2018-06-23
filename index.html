@@ -15,7 +15,7 @@
 
 <body>
     <header>
-        <div id="login" onclick="login()">
+        <div class="login" onclick="validarToken()">
             <a>Login</a>
         </div>
         <div class="logo">
@@ -28,35 +28,54 @@
                 <li><a onclick="traerInfo('mesa')">Mesas</a></li>
                 <li><a onclick="traerInfo('comanda')">Comandas</a></li>
                 <li><a onclick="traerInfo('pedido')">Pedidos</a></li>
-                <li><a onclick="traerInfo('empleado')">Empleado</a></li>
+                <li><a onclick="traerInfo('empleado')">Empleados</a></li>
                 <li><a onclick="traerInfo('encuesta')">Encuesta</a></li>
+                <li><a onclick="traerInfo('log')">Log</a></li>
             </ul>
         </nav>
     </div>
 
     <div class="contenido contenedor">
         <main>
-            <section>
-                <table id="lista" style="display: none">
-                    <h2 id="mensaje"></h2>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Codigo</th>
-                            <th>Estado</th>
-                            <th>Modificar</th>
-                            <th>Borrar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    
-                    </tbody>
-                </table>
+            <h2 id="mensaje"></h2>
+            <section id="login">
+                <form action="POST" method="post">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" class="is-box" name="usuario" id="usuario">
+                    <label for="clave">Clave</label>
+                    <input type="text" class="is-box" name="clave" id="clave">
+                    <input type="button" value="Guardar" id="btnLogin" class="boton is-box" onclick="login()">
+                </form>
+            </section>
+            <section id="frmComanda" class="formulario frm-comanda">
+                <form action="POST" method="post">
+                    <label for="cliente">Nombre del Cliente</label>
+                    <input type="text" class="is-box field" name="cliente" id="cliente">
+                    <label for="mesa">Id Mesa</label>
+                    <input type="text" class="is-box field" name="mesa" id="mesa">
+                    <label for="foto">Foto</label>
+                    <input type="file" class="field" name="foto" id="foto">
+                    <label for="barra">Ingresar pedido a la barra</label>
+                    <input type="text" class="is-box field" name="barra" id="barra" placeholder="Detalle su pedido..">
+                    <label for="cerveza">Ingresar pedido a la beer bar</label>
+                    <input type="text" class="is-box field" name="cerveza" id="cerveza" placeholder="Detalle su pedido..">
+                    <label for="cocina">Ingresar pedido a la cocina</label>
+                    <input type="text" class="is-box field" name="cocina" id="cocina" placeholder="Detalle su pedido..">
+                    <label for="candy">Ingresar pedido al candy bar</label>
+                    <input type="text" class="is-box field" name="candy" id="candy" placeholder="Detalle su pedido..">
+                    <input type="button" value="Guardar" class="boton" onclick="agregarComanda()">
+                </form>
+            </section>
+            <section id="lista">
+                <div style="text-align: right">
+                    <input type="button" value="Agregar" class="boton is-box" onclick="agregarElemento()" >
+                </div>
+                <table id="tabla" name=""></table>
             </section>
         </main>
         
     </div>
-    <div id="loading">
+    <div id="loading" class="message">
         <img src="static/assets/loading.svg" alt="Loading Icon">
     </div>
 </body>

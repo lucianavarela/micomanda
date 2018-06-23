@@ -55,7 +55,7 @@ class Encuesta
     }
 
     public function GuardarEncuesta() {
-        if ($this->id >= 0) {
+        if ($this->id > 0) {
             $this->ModificarEncuesta();
         } else {
             $this->InsertarEncuesta();

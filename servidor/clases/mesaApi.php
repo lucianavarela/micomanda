@@ -46,16 +46,12 @@ class mesaApi extends Mesa implements IApiUsable
 	}
 		
 	public function ModificarUno($request, $response, $args) {
-		//$response->getBody()->write("<h1>Modificar  uno</h1>");
 		$ArrayDeParametros = $request->getParsedBody();
 		$mimesa = new Mesa();
 		$mimesa->id=$ArrayDeParametros['id'];
 		$mimesa->param1=$ArrayDeParametros['codigo'];
 		$mimesa->param2=$ArrayDeParametros['estado'];
-		$resultado =$mimesa->ModificarMesa();
-		$objDelaRespuesta= new stdclass();
-		//var_dump($resultado);
-		$objDelaRespuesta->resultado=$resultado;
-		return $response->withJson($objDelaRespuesta, 200);		
+		$mimesa->GuardarMesa();
+		return $response->withJson($mimesa, 200);		
 	}
 }

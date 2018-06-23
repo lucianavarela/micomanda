@@ -18,20 +18,20 @@ class logApi extends Log implements IApiUsable
 
 	public function CargarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$param1= $ArrayDeParametros['param1'];
-		$param2= $ArrayDeParametros['param2'];
-		$param3= $ArrayDeParametros['param3'];
+		$idEmpleado= $ArrayDeParametros['idEmpleado'];
+		$fecha= $ArrayDeParametros['fecha'];
+		$accion= $ArrayDeParametros['accion'];
 		$milog = new Log();
-		$milog->param1=$param1;
-		$milog->param2=$param2;
-		$milog->param3=$param3;
+		$milog->idEmpleado=$idEmpleado;
+		$milog->fecha=$fecha;
+		$milog->accion=$accion;
 		$milog->InsertarLog();
 		$archivos = $request->getUploadedFiles();
 		$destino="./fotos/";
 		$nombreAnterior=$archivos['foto']->getClientFilename();
 		$extension= explode(".", $nombreAnterior)  ;
 		$extension=array_reverse($extension);
-		$archivos['foto']->moveTo($destino.$param1.".".$extension[0]);
+		$archivos['foto']->moveTo($destino.$idEmpleado.".".$extension[0]);
 		$response->getBody()->write("se guardo el log");
 		return $response;
 	}
@@ -57,18 +57,13 @@ class logApi extends Log implements IApiUsable
 	}
 		
 	public function ModificarUno($request, $response, $args) {
-		//$response->getBody()->write("<h1>Modificar  uno</h1>");
 		$ArrayDeParametros = $request->getParsedBody();
-		//var_dump($ArrayDeParametros);    	
 		$milog = new Log();
 		$milog->id=$ArrayDeParametros['id'];
-		$milog->param1=$ArrayDeParametros['param1'];
-		$milog->param2=$ArrayDeParametros['param2'];
-		$milog->param3=$ArrayDeParametros['param3'];
-		$resultado =$milog->ModificarLog();
-		$objDelaRespuesta= new stdclass();
-		//var_dump($resultado);
-		$objDelaRespuesta->resultado=$resultado;
-		return $response->withJson($objDelaRespuesta, 200);		
+		$milog->idEmpleado=$ArrayDeParametros['idEmpleado'];
+		$milog->fecha=$ArrayDeParametros['fecha'];
+		$milog->accion=$ArrayDeParametros['accion'];
+		$milog->GuardarLog();
+		return $response->withJson($milog, 200);		
 	}
 }

@@ -56,7 +56,7 @@ class Mesa
     }
 
     public function GuardarMesa() {
-        if ($this->id >= 0) {
+        if ($this->id > 0) {
             $this->ModificarMesa();
         } else {
             $this->InsertarMesa();

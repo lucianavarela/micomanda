@@ -35,6 +35,17 @@ class pedidoApi extends Pedido implements IApiUsable
 		return $newResponse;
 	}
 
+	public function EntregarACliente($request, $response, $args) {
+		$ArrayDeParametros = $request->getParsedBody();
+		if ($ArrayDeParametros['idPedido']) {
+			$respuesta=Empleado::EntregarPedido($ArrayDeParametros['idPedido']);
+			$response->getBody()->write($respuesta);
+			return $response;
+		}
+		$response->getBody()->write('Debe ingresar el id del empleado y el numero del pedido');
+		return $response;
+	}
+
 	public function CargarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$sector= $ArrayDeParametros['sector'];
@@ -57,7 +68,7 @@ class pedidoApi extends Pedido implements IApiUsable
 
 	public function BorrarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$id=$ArrayDeParametros['id'];
+		$id=$args['id'];
 		$pedido= new Pedido();
 		$pedido->id=$id;
 		$cantidadDeBorrados=$pedido->BorrarPedido();
@@ -74,20 +85,18 @@ class pedidoApi extends Pedido implements IApiUsable
 		$newResponse = $response->withJson($objDelaRespuesta, 200);  
 		return $newResponse;
 	}
-		
+	
 	public function ModificarUno($request, $response, $args) {
-		//$response->getBody()->write("<h1>Modificar  uno</h1>");
 		$ArrayDeParametros = $request->getParsedBody();
-		//var_dump($ArrayDeParametros);    	
 		$mipedido = new Pedido();
-		$mipedido->id=$ArrayDeParametros['id'];
+		$mipedido->id=$args['id'];
 		$mipedido->sector=$ArrayDeParametros['sector'];
 		$mipedido->idEmpleado=$ArrayDeParametros['idEmpleado'];
 		$mipedido->descripcion=$ArrayDeParametros['descripcion'];
-		$resultado =$mipedido->ModificarPedido();
-		$objDelaRespuesta= new stdclass();
-		//var_dump($resultado);
-		$objDelaRespuesta->resultado=$resultado;
-		return $response->withJson($objDelaRespuesta, 200);		
+		$mipedido->estimacion=$ArrayDeParametros['estimacion'];
+		$mipedido->fechaIngresado=$ArrayDeParametros['fechaIngresado'];
+		$mipedido->fechaEntregado=$ArrayDeParametros['fechaEntregado'];
+		$mipedido->GuardarPedido();
+		return $response->withJson($mipedido, 200);		
 	}
 }
