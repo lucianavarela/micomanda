@@ -74,7 +74,7 @@ class MWparaAutentificar
 		}
 		if($objDelaRespuesta->esValido) {
 			$payload=AutentificadorJWT::ObtenerData($token);
-			$request = $request->withAttribute('sector', $payload->sector);
+			$request = $request->withAttribute('empleado', $payload);
 			$response = $next($request, $response);
 		} else {
 			$objDelaRespuesta->respuesta="Por favor logueese para realizar esta accion!";
@@ -92,7 +92,7 @@ class MWparaAutentificar
 	public function VerificarAdmin($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = $request->getAttribute('sector');
+		$sector = ($request->getAttribute('empleado'))->sector;
 		if($sector == "management") {
 			$response = $next($request, $response);
 		}
@@ -112,7 +112,7 @@ class MWparaAutentificar
 	public function VerificarEmpleado($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = $request->getAttribute('sector');
+		$sector = ($request->getAttribute('empleado'))->sector;
 		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
 			$response = $next($request, $response);
 		}
@@ -132,7 +132,7 @@ class MWparaAutentificar
 	public function VerificarMozo($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = $request->getAttribute('sector');
+		$sector = ($request->getAttribute('empleado'))->sector;
 		if($sector == "mozo") {
 			$response = $next($request, $response);
 		}
@@ -204,13 +204,14 @@ class MWparaAutentificar
 	public function FiltrarPedidos($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = $request->getAttribute('sector');
+		$idEmpleado = ($request->getAttribute('empleado'))->id;
+		$sector = ($request->getAttribute('empleado'))->sector;
 		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
 			$response = $next($request, $response);
 			$pedidos = json_decode($response->getBody()->__toString());
 			if (is_array($pedidos)) {
 				foreach ($pedidos as $key => $pedido) {
-					if ($pedido->sector != $sector) {
+					if (!($pedido->sector == $sector && ($pedido->estado == 'pendiente' || ($pedido->estado == 'en preparación' && $pedido->idEmpleado == $idEmpleado)))) {
 						unset($pedidos[$key]);
 					}
 				}
@@ -221,6 +222,23 @@ class MWparaAutentificar
 			}
 			$nueva=$response->withJson($pedidos, 200);
 			return $nueva;
+		} else if($sector == "mozo") {
+			$response = $next($request, $response);
+			$pedidos = json_decode($response->getBody()->__toString());
+			if (is_array($pedidos)) {
+				foreach ($pedidos as $key => $pedido) {
+					if ($pedido->estado != 'listo para servir') {
+						unset($pedidos[$key]);
+					}
+				}
+			} else {
+				if ($pedidos->sector != $sector) {
+					$pedidos = [];
+				}
+			}
+			$nueva=$response->withJson($pedidos, 200);
+			return $nueva;
+			return $response;
 		} else if($sector == "management") {
 			$response = $next($request, $response);
 			return $response;

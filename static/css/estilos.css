@@ -1,6 +1,7 @@
 * {
     padding: 0;
     margin: 0;
+    font-size: 14px;
 }
 
 body {
@@ -85,7 +86,7 @@ main {
 
 article {
     text-align: justify;
-    font-size: 20px;
+    font-size: 1rem;
 }
 
 
@@ -99,7 +100,7 @@ article img {
 }
 
 .boton {
-    font-size: 15px;
+    font-size: 1rem;
     border: none;
     cursor: pointer;
     padding: 5px 15px;
@@ -107,7 +108,14 @@ article img {
     background-color: #00b6cd;
     color: white;
     text-decoration: none;
+}
 
+.boton-tabla{
+    cursor: pointer;
+    box-sizing: border-box;
+    background-color: #00b6cd57;
+    color: black;
+    text-decoration: none;
 }
 
 .sidebar {
@@ -196,9 +204,13 @@ footer p {
     color: #fff;
 }
 
-#tabla tbody th{
+#tabla th{
     font-weight: normal;
-    padding: 10px;
+}
+
+#tabla tbody th{
+    padding: 0.3rem;
+    color: #1f1f1f;
 }
 
 #tabla tr:nth-child(even) {
@@ -268,13 +280,18 @@ footer p {
 
 .formulario, #lista {
     display: none;
+    font-size: 0.9rem;
 }
 
-.formulario input {
+.formulario input, .formulario select {
     display: block;
 }
 
 .field {
     margin: 1rem;
     width: 20rem;
+}
+
+#agregar {
+    display: none;
 }

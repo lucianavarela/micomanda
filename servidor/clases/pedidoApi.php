@@ -31,14 +31,14 @@ class pedidoApi extends Pedido implements IApiUsable
 
 	public function TraerTodosListos($request, $response, $args) {
 		$pedidos=Comanda::TraerListos();
-		$newResponse = $response->withJson($pedidos, 200);  
+		$newResponse = $response->withJson($pedidos, 200);
 		return $newResponse;
 	}
 
 	public function EntregarACliente($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		if ($ArrayDeParametros['idPedido']) {
-			$respuesta=Empleado::EntregarPedido($ArrayDeParametros['idPedido']);
+			$respuesta=Pedido::EntregarPedido($ArrayDeParametros['idPedido']);
 			$response->getBody()->write($respuesta);
 			return $response;
 		}

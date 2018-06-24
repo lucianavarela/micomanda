@@ -184,7 +184,16 @@ class Pedido
     public static function TraerListos() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
         $consulta =$objetoAccesoDato->RetornarConsulta(
-            "SELECT * FROM comandas WHERE estado = 'listo para servir'"
+            "SELECT * FROM pedidos WHERE estado = 'listo para servir'"
+        );
+        $consulta->execute();
+        return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
+    }
+
+    public static function TraerPedidosPorComanda($codigoComanda) {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT * FROM pedidos WHERE idComanda = '$codigoComanda'"
         );
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
@@ -192,5 +201,26 @@ class Pedido
 
     public function toString() {
         return "Metodo mostar:".$this->sector."  ".$this->idEmpleado."  ".$this->descripcion;
+    }
+    
+    public static function EntregarPedido($id) {
+        $pedido = Pedido::TraerPedido($id);
+        $pedido->estado = 'entregado';
+        $pedido->GuardarPedido();
+        $comanda=Comanda::TraerComanda($pedido->idComanda);
+        $todos_pedidos_listos = true;
+        $pedidos_pendientes_de_comanda = Pedido::TraerPedidosPorComanda($comanda->codigo);
+        foreach ($pedidos_pendientes_de_comanda as $pedido) {
+            if (!($pedido->estado == 'entregado')) {
+                $todos_pedidos_listos = false;
+                break;
+            }
+        }
+        if ($todos_pedidos_listos) {
+            $mesa=Mesa::TraerMesa($comanda->idMesa);
+            $mesa->estado = 'con clientes comiendo';
+            $mesa->GuardarMesa();
+        }
+        return "Pedido #$id entregado.";
     }
 }

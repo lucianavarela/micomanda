@@ -123,17 +123,6 @@ class Comanda
         return $comandaResultado;
     }
 
-    public function ValidarPedidos() {
-        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select * from comandas where codigo = '$codigoComanda';");
-        $consulta->execute();
-        $comandaResultado= $consulta->fetchObject('Comanda');
-        if ($comandaResultado) {
-            $pedidos = Pedido::TraerPedidosPorComanda($codigoComanda);
-        }
-        return $comandaResultado;
-    }
-
     public function toString() {
         return "\nComanda #$this->codigo: $this->nombreCliente (Mesa #$this->idMesa)";
     }

@@ -116,12 +116,20 @@ class Empleado
         "\nDetalles del pedido: ".$pedido->GetDescripcion();
     }
 
+    public static function PedidoPreparado($id) {
+        $pedido = Pedido::TraerPedido($id);
+        $pedido->estado = 'listo para servir';
+        $pedido->GuardarPedido();
+        $empleado=Empleado::TraerEmpleado($pedido->idEmpleado);
+        $empleado->estado = 'activo';
+        $empleado->GuardarEmpleado();
+        return "Pedido #$id entregado.";
+    }
+    
     public static function EntregarPedido($id) {
         $pedido = Pedido::TraerPedido($id);
         $pedido->estado = 'listo para servir';
         $pedido->GuardarPedido();
-        $comanda = Comanda::TraerComanda($pedido->idComanda);
-        $comanda->ValidarPedidos();
         $empleado=Empleado::TraerEmpleado($pedido->idEmpleado);
         $empleado->estado = 'activo';
         $empleado->GuardarEmpleado();

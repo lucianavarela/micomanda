@@ -66,8 +66,24 @@
                     <input type="button" value="Guardar" class="boton" onclick="agregarComanda()">
                 </form>
             </section>
+            <section id="frmPedido" class="formulario frm-pedido">
+                <form action="POST" method="post">
+                    <label for="comanda">Id Comanda</label>
+                    <input type="text" class="is-box field" name="comanda" id="comanda">
+                    <label for="foto">Sector</label>
+                    <select class="field" name="sector" id="sector">
+                        <option value="barra">Barra</option>
+                        <option value="cerveza">Beer Bar</option>
+                        <option value="cocina">Cocina</option>
+                        <option value="candy">Candy Bar</option>
+                    </select>
+                    <label for="descripcion">Descripcion</label>
+                    <input type="text" class="is-box field" name="descripcion" id="descripcion">
+                    <input type="button" value="Guardar" class="boton" onclick="agregarComanda()">
+                </form>
+            </section>
             <section id="lista">
-                <div style="text-align: right">
+                <div style="text-align: right" id="agregar">
                     <input type="button" value="Agregar" class="boton is-box" onclick="agregarElemento()" >
                 </div>
                 <table id="tabla" name=""></table>

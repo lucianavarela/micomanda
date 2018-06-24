@@ -40,7 +40,6 @@ class AutentificadorJWT
             self::$tipoEncriptacion
             );
         } catch (ExpiredException $e) {
-            //var_dump($e);
            throw new Exception("Clave fuera de tiempo");
         }
         

@@ -8,13 +8,11 @@ class Login
             $token = AutentificadorJWT::CrearToken($empleado);
             $objDelaRespuesta = array(
                 'token'=>$token,
-                'usuario' => $ArrayDeParametros['usuario']
+                'usuario'=>$ArrayDeParametros['usuario']
             );
             return $response->withJson($objDelaRespuesta, 200);
         } else {
-            $objDelaRespuesta = array(
-                'respuesta'=>'Usuario inexistente'
-            );
+			$objDelaRespuesta->respuesta='Usuario inexistente';
             return $response->withJson($objDelaRespuesta, 401);
         }
     }

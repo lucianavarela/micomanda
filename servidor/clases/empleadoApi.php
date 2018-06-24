@@ -18,8 +18,9 @@ class empleadoApi extends Empleado implements IApiUsable
 
 	public function TomarUnPedido($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		if ($ArrayDeParametros['idEmpleado'] && $ArrayDeParametros['idPedido'] && $ArrayDeParametros['estimacion']) {
-			$respuesta=Empleado::TomarPedido($ArrayDeParametros['idEmpleado'], $ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
+		$idEmpleado = ($request->getAttribute('empleado'))->id;
+		if ($idEmpleado && $ArrayDeParametros['idPedido'] && $ArrayDeParametros['estimacion']) {
+			$respuesta=Empleado::TomarPedido($idEmpleado, $ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
 			$response->getBody()->write($respuesta);
 			return $response;
 		}
@@ -30,7 +31,7 @@ class empleadoApi extends Empleado implements IApiUsable
 	public function EntregarUnPedido($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		if ($ArrayDeParametros['idPedido']) {
-			$respuesta=Empleado::EntregarPedido($ArrayDeParametros['idPedido']);
+			$respuesta=Empleado::PedidoPreparado($ArrayDeParametros['idPedido']);
 			$response->getBody()->write($respuesta);
 			return $response;
 		}
