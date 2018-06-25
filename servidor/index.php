@@ -53,9 +53,6 @@ $app->group('/api', function () use ($app) {
   $app->group('/pedido', function () use ($app) {
     $this->get('/', \pedidoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':FiltrarPedidos')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->get('/{id}', \pedidoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarPedidos')->add(\MWparaAutentificar::class . ':VerificarToken');
-    $this->get('/pendientes/', \pedidoApi::class . ':TraerTodosPendientes')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
-    $this->get('/pendientes/{sector}', \pedidoApi::class . ':TraerPendientesSector')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
-    $this->get('/listos/', \pedidoApi::class . ':TraerTodosListos')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/', \pedidoApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/entregar_pedido', \pedidoApi::class . ':EntregarACliente')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->delete('/{id}', \pedidoApi::class . ':BorrarUno');

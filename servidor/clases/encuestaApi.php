@@ -26,40 +26,31 @@ class encuestaApi extends Encuesta implements IApiUsable
 		$miencuesta->param2=$param2;
 		$miencuesta->param3=$param3;
 		$miencuesta->InsertarEncuesta();
-		$archivos = $request->getUploadedFiles();
-		$destino="./fotos/";
-		$nombreAnterior=$archivos['foto']->getClientFilename();
-		$extension= explode(".", $nombreAnterior)  ;
-		$extension=array_reverse($extension);
-		$archivos['foto']->moveTo($destino.$param1.".".$extension[0]);
-		$response->getBody()->write("se guardo el encuesta");
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Se ha ingresado la encuesta";
+		return $response->withJson($objDelaRespuesta, 200);
 	}
 
 	public function BorrarUno($request, $response, $args) {
-		$ArrayDeParametros = $request->getParsedBody();
-		$id=$ArrayDeParametros['id'];
+		$id=$args['id'];
 		$encuesta= new Encuesta();
 		$encuesta->id=$id;
 		$cantidadDeBorrados=$encuesta->BorrarEncuesta();
-		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->cantidad=$cantidadDeBorrados;
-		if($cantidadDeBorrados>0)
-			{
-				$objDelaRespuesta->resultado="algo borro!!!";
-			}
-			else
-			{
-				$objDelaRespuesta->resultado="no Borro nada!!!";
-			}
-		$newResponse = $response->withJson($objDelaRespuesta, 200);  
-		return $newResponse;
-	}
 		
+		$objDelaRespuesta= new stdclass();
+		if($cantidadDeBorrados>0) {
+			$objDelaRespuesta->respuesta="Encuesta eliminada";
+			return $response->withJson($objDelaRespuesta, 200);
+		} else {
+			$objDelaRespuesta->respuesta="Error eliminando la encuesta";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
+	}
+
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$miencuesta = new Encuesta();
-		$miencuesta->id=$ArrayDeParametros['id'];
+		$miencuesta->id=$args['id'];
 		$miencuesta->param1=$ArrayDeParametros['param1'];
 		$miencuesta->param2=$ArrayDeParametros['param2'];
 		$miencuesta->param3=$ArrayDeParametros['param3'];

@@ -69,25 +69,20 @@ class comandaApi extends Comanda implements IApiUsable
 	}
 
 	public function BorrarUno($request, $response, $args) {
-		$ArrayDeParametros = $request->getParsedBody();
 		$id=$args['id'];
 		$comanda= new Comanda();
 		$comanda->id=$id;
 		$cantidadDeBorrados=$comanda->BorrarComanda();
 		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->cantidad=$cantidadDeBorrados;
-		if($cantidadDeBorrados>0)
-			{
-				$objDelaRespuesta->resultado="Comanda eliminado";
-			}
-			else
-			{
-				$objDelaRespuesta->resultado="Comanda inexistente";
-			}
-		$newResponse = $response->withJson($objDelaRespuesta, 200);  
-		return $newResponse;
+		if($cantidadDeBorrados>0) {
+			$objDelaRespuesta->respuesta="Comanda eliminada";
+			return $response->withJson($objDelaRespuesta, 200);
+		} else {
+			$objDelaRespuesta->respuesta="Error eliminando la comanda";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
 	}
-		
+
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$micomanda = new Comanda();

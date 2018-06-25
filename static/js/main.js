@@ -38,6 +38,9 @@ function login() {
             $('#login').hide();
             $('#mensaje').text("Bienvenido");
             $('.login a').text(data['usuario']);
+            if(data['sector'] == 'management') {
+                $('#agregar').addClass('empleado');
+            }
         },
         error:function(data) {
             $('#loading').hide();
@@ -59,7 +62,7 @@ function traerInfo(tabla){
         },
         success:function(data) {
             $('#loading').hide();
-            if ($.inArray(tabla, ['comanda', 'mesa', 'empleado']) != -1) {
+            if ($('#agregar').hasClass(tabla)) {
                 $('#agregar').show();
             } else {
                 $('#agregar').hide();
@@ -82,22 +85,35 @@ function modificarArticulo(id){
     document.getElementById('articulo').value = datos[i].articulo;
 }
 
-function borrarArticulo(id){
-    xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function(){
-        if (this.readyState == 4 && this.status == 200) {
-           cargarDatos();
+function borrarElemento(id, tabla){
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/"+tabla+"/"+id,
+        //url:"/servidor/api/"+tabla+"/",
+        type:"DELETE",
+        contentType: 'application/json',
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo(tabla);
+        },
+        error:function() {
+            $('#loading').hide();
         }
-    };
-    xhr.open("POST","http://localhost:3000/eliminar",true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify({"collection":"posts","id": id}));
+    });
 }
 
 function agregarElemento() {
     if ($('#tabla').attr('name') == 'mesa') {
         agregarMesa();
     } else {
+        $('.frm-' + $('#tabla').attr('name') + ' .field').val('');
         $('.frm-' + $('#tabla').attr('name')).toggle();
     }
 }
@@ -112,14 +128,16 @@ function agregarMesa() {
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
         },
-        success:function(data) {
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
             $('#loading').hide();
             traerInfo('mesa');
         },
-        error:function(data) {
+        error:function() {
             $('#loading').hide();
-            var data = JSON.parse(data.responseText)
-            alert(data['respuesta']);
         }
     });
 }
@@ -142,15 +160,46 @@ function agregarComanda() {
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
         },
-        success:function(data) {
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
             alert(data['respuesta']);
+        },
+        success:function() {
             $('#loading').hide();
             traerInfo('comanda');
         },
-        error:function(data) {
+        error:function() {
             $('#loading').hide();
-            var data = JSON.parse(data.responseText)
+        }
+    });
+}
+
+function agregarEmpleado() {
+    $('.formulario').hide();
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/empleado/",
+        //url:"/servidor/api/comanda/",
+        type:"POST",
+        data: {
+            'usuario': $('#frmEmpleado #usuario').val(),
+            'clave': $('#frmEmpleado #clave').val(),
+            'sector': $('#frmEmpleado #sector').val(),
+            'sueldo': $('#frmEmpleado #sueldo').val()
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
             alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('empleado');
+        },
+        error:function() {
+            $('#loading').hide();
         }
     });
 }
@@ -168,14 +217,16 @@ function entregarPedido(idPedido, estadoPedido) {
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('token', localStorage.getItem('token'));
             },
-            success:function(data) {
+            complete:function(data) {
+                var data = JSON.parse(data.responseText);
+                alert(data['respuesta']);
+            },
+            success:function() {
                 $('#loading').hide();
                 traerInfo('pedido');
             },
-            error:function(data) {
+            error:function() {
                 $('#loading').hide();
-                var data = JSON.parse(data.responseText)
-                alert(data['respuesta']);
             }
         });
     } else if (estadoPedido == 'listo para servir') {
@@ -189,15 +240,16 @@ function entregarPedido(idPedido, estadoPedido) {
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('token', localStorage.getItem('token'));
             },
-            success:function(data) {
-                $('#loading').hide();
+            complete:function(data) {
+                var data = JSON.parse(data.responseText);
                 alert(data['respuesta']);
+            },
+            success:function() {
+                $('#loading').hide();
                 traerInfo('pedido');
             },
-            error:function(data) {
+            error:function() {
                 $('#loading').hide();
-                var data = JSON.parse(data.responseText)
-                alert(data['respuesta']);
             }
         });
     } else {
@@ -219,14 +271,16 @@ function tomarPedido(idPedido) {
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
         },
-        success:function(data) {
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
             $('#loading').hide();
             traerInfo('pedido');
         },
-        error:function(data) {
+        error:function() {
             $('#loading').hide();
-            var data = JSON.parse(data.responseText)
-            alert(data['respuesta']);
         }
     });
 }
@@ -239,7 +293,7 @@ function cargarTabla(data, tabla) {
             for (i in data) {
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].codigo+"</th><th>"+data[i].estado+"</th>"+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
-                "<th class='boton-tabla' onclick='borrarArticulo("+data[i].id+")'>Borrar</th></tr>";
+                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;
@@ -249,7 +303,7 @@ function cargarTabla(data, tabla) {
                 var importe = data[i].importe == null ? "-" : "$ " + data[i].importe;
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].codigo+"</th><th>"+data[i].nombreCliente+"</th><th>"+data[i].idMesa+"</th><th>"+importe+"</th>"+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
-                "<th class='boton-tabla' onclick='borrarArticulo("+data[i].id+")'>Borrar</th></tr>";
+                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;
@@ -264,7 +318,7 @@ function cargarTabla(data, tabla) {
                 "<th class='boton-tabla' onclick='tomarPedido("+data[i].id+")'>Tomar</th>"+
                 "<th class='boton-tabla' onclick='entregarPedido("+data[i].id+", \""+data[i].estado+"\")'>Entregar</th>"+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
-                "<th class='boton-tabla' onclick='borrarArticulo("+data[i].id+")'>Borrar</th></tr>";
+                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;
@@ -278,7 +332,7 @@ function cargarTabla(data, tabla) {
                 var sueldo = 'sueldo' in data[i] ? "<th>$ "+data[i].sueldo+"</th>" : ""
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].usuario+"</th><th>"+data[i].clave+"</th><th>"+data[i].estado+"</th><th>"+data[i].sector+"</th>"+sueldo+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
-                "<th class='boton-tabla' onclick='borrarArticulo("+data[i].id+")'>Borrar</th></tr>";
+                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;

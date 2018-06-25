@@ -70,7 +70,7 @@
                 <form action="POST" method="post">
                     <label for="comanda">Id Comanda</label>
                     <input type="text" class="is-box field" name="comanda" id="comanda">
-                    <label for="foto">Sector</label>
+                    <label for="sector">Sector</label>
                     <select class="field" name="sector" id="sector">
                         <option value="barra">Barra</option>
                         <option value="cerveza">Beer Bar</option>
@@ -82,8 +82,28 @@
                     <input type="button" value="Guardar" class="boton" onclick="agregarComanda()">
                 </form>
             </section>
+            <section id="frmEmpleado" class="formulario frm-empleado">
+                <form action="POST" method="post">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" class="is-box field" name="usuario" id="usuario">
+                    <label for="clave">Clave</label>
+                    <input type="text" class="is-box field" name="clave" id="clave">
+                    <label for="sector">Sector</label>
+                    <select class="field" name="sector" id="sector">
+                        <option value="management">Socio</option>
+                        <option value="mozo">Mozo</option>
+                        <option value="barra">Barra</option>
+                        <option value="cerveza">Beer Bar</option>
+                        <option value="cocina">Cocina</option>
+                        <option value="candy">Candy Bar</option>
+                    </select>
+                    <label for="sueldo">Sueldo</label>
+                    <input type="number" class="is-box field" name="sueldo" id="sueldo">
+                    <input type="button" value="Guardar" class="boton" onclick="agregarEmpleado()">
+                </form>
+            </section>
             <section id="lista">
-                <div style="text-align: right" id="agregar">
+                <div style="text-align: right" id="agregar" class="comanda mesa">
                     <input type="button" value="Agregar" class="boton is-box" onclick="agregarElemento()" >
                 </div>
                 <table id="tabla" name=""></table>

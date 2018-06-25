@@ -26,40 +26,31 @@ class logApi extends Log implements IApiUsable
 		$milog->fecha=$fecha;
 		$milog->accion=$accion;
 		$milog->InsertarLog();
-		$archivos = $request->getUploadedFiles();
-		$destino="./fotos/";
-		$nombreAnterior=$archivos['foto']->getClientFilename();
-		$extension= explode(".", $nombreAnterior)  ;
-		$extension=array_reverse($extension);
-		$archivos['foto']->moveTo($destino.$idEmpleado.".".$extension[0]);
-		$response->getBody()->write("se guardo el log");
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Se guardo el log";
+		return $response->withJson($objDelaRespuesta, 200);
 	}
 
 	public function BorrarUno($request, $response, $args) {
-		$ArrayDeParametros = $request->getParsedBody();
-		$id=$ArrayDeParametros['id'];
+		$id=$args['id'];
 		$log= new Log();
 		$log->id=$id;
 		$cantidadDeBorrados=$log->BorrarLog();
-		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->cantidad=$cantidadDeBorrados;
-		if($cantidadDeBorrados>0)
-			{
-				$objDelaRespuesta->resultado="algo borro!!!";
-			}
-			else
-			{
-				$objDelaRespuesta->resultado="no Borro nada!!!";
-			}
-		$newResponse = $response->withJson($objDelaRespuesta, 200);  
-		return $newResponse;
-	}
 		
+		$objDelaRespuesta= new stdclass();
+		if($cantidadDeBorrados>0) {
+			$objDelaRespuesta->respuesta="Log eliminado";
+			return $response->withJson($objDelaRespuesta, 200);
+		} else {
+			$objDelaRespuesta->respuesta="Error eliminando el log";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
+	}
+
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$milog = new Log();
-		$milog->id=$ArrayDeParametros['id'];
+		$milog->id=$args['id'];
 		$milog->idEmpleado=$ArrayDeParametros['idEmpleado'];
 		$milog->fecha=$ArrayDeParametros['fecha'];
 		$milog->accion=$ArrayDeParametros['accion'];

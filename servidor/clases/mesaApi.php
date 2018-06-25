@@ -21,34 +21,31 @@ class mesaApi extends Mesa implements IApiUsable
 		$mimesa = new Mesa();
 		$mimesa->SetEstado('cerrada');
 		$codigo = $mimesa->InsertarMesa();
-		$response->getBody()->write("Se ha ingresado la mesa #$codigo");
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Se ha ingresado la mesa #$codigo";
+		return $response->withJson($objDelaRespuesta, 200);
 	}
 
 	public function BorrarUno($request, $response, $args) {
-		$ArrayDeParametros = $request->getParsedBody();
-		$id=$ArrayDeParametros['id'];
+		$id=$args['id'];
 		$mesa= new Mesa();
 		$mesa->id=$id;
 		$cantidadDeBorrados=$mesa->BorrarMesa();
+
 		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->cantidad=$cantidadDeBorrados;
-		if($cantidadDeBorrados>0)
-			{
-				$objDelaRespuesta->resultado="algo borro!!!";
-			}
-			else
-			{
-				$objDelaRespuesta->resultado="no Borro nada!!!";
-			}
-		$newResponse = $response->withJson($objDelaRespuesta, 200);  
-		return $newResponse;
+		if($cantidadDeBorrados>0) {
+			$objDelaRespuesta->respuesta="Mesa eliminada";
+			return $response->withJson($objDelaRespuesta, 200);
+		} else {
+			$objDelaRespuesta->respuesta="Error eliminando la mesa";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
 	}
 		
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$mimesa = new Mesa();
-		$mimesa->id=$ArrayDeParametros['id'];
+		$mimesa->id=$args['id'];
 		$mimesa->param1=$ArrayDeParametros['codigo'];
 		$mimesa->param2=$ArrayDeParametros['estado'];
 		$mimesa->GuardarMesa();

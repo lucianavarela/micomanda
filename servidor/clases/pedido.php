@@ -56,19 +56,46 @@ class Pedido
         $this->fechaIngresado = $value;
     }
     public function SetEstimacion($value) {
-        $this->estimacion = $value;
+        $now = date("Y-m-d H:i:s");
+        $time = date("Y-m-d H:i:s",strtotime("+$value minutes",strtotime($now)));
+        $this->estimacion = $time;
     }
     public function SetFechaEntregado($value) {
         $this->fechaEntregado = $value;
     }
     
     public function BorrarPedido() {
+        $idComanda = $this->idComanda;
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("
             delete
             from pedidos
             WHERE id=$this->id");
         $consulta->execute();
+
+        if ($consulta->rowCount()>0) {
+            $comanda=Comanda::TraerComanda($idComanda);
+            $todos_pedidos_listos = true;
+            $pedidos_pendientes_de_comanda = Pedido::TraerPedidosPorComanda($idComanda);
+            if (sizeof($pedidos_pendientes_de_comanda) > 0) {
+                foreach ($pedidos_pendientes_de_comanda as $pedido) {
+                    if (!($pedido->estado == 'entregado')) {
+                        $todos_pedidos_listos = false;
+                        break;
+                    }
+                }
+                if ($todos_pedidos_listos) {
+                    $mesa=Mesa::TraerMesa($comanda->idMesa);
+                    $mesa->estado = 'con clientes comiendo';
+                    $mesa->GuardarMesa();
+                }
+            } else {
+                $mesa=Mesa::TraerMesa($comanda->idMesa);
+                $mesa->estado = 'cerrada';
+                $mesa->GuardarMesa();
+            }
+        }
+
         return $consulta->rowCount();
     }
 
@@ -156,38 +183,6 @@ class Pedido
         $consulta->execute();
         $pedidoResultado= $consulta->fetchObject('Pedido');
         return $pedidoResultado;
-    }
-
-    public static function TraerPendientes() {
-        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta(
-            "SELECT *
-            FROM pedidos
-            WHERE estado = 'pendiente'"
-        );
-        $consulta->execute();
-        return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
-    }
-
-    public static function TraerPendientesDeSector($sector) {
-        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta(
-            "SELECT *
-            FROM pedidos
-            WHERE estado = 'pendiente'
-            AND sector = '$sector'"
-        );
-        $consulta->execute();
-        return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
-    }
-
-    public static function TraerListos() {
-        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta(
-            "SELECT * FROM pedidos WHERE estado = 'listo para servir'"
-        );
-        $consulta->execute();
-        return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
     }
 
     public static function TraerPedidosPorComanda($codigoComanda) {

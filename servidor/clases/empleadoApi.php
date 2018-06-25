@@ -18,25 +18,29 @@ class empleadoApi extends Empleado implements IApiUsable
 
 	public function TomarUnPedido($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$idEmpleado = ($request->getAttribute('empleado'))->id;
+		$idEmpleado = $request->getAttribute('empleado')->id;
 		if ($idEmpleado && $ArrayDeParametros['idPedido'] && $ArrayDeParametros['estimacion']) {
 			$respuesta=Empleado::TomarPedido($idEmpleado, $ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
-			$response->getBody()->write($respuesta);
-			return $response;
+			$objDelaRespuesta= new stdclass();
+			$objDelaRespuesta->respuesta=$respuesta;
+			return $response->withJson($objDelaRespuesta, 200);
 		}
-		$response->getBody()->write('Debe ingresar el id del empleado y el numero del pedido');
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Debe ingresar el id del empleado y el numero del pedido";
+		return $response->withJson($objDelaRespuesta, 401);
 	}
 
 	public function EntregarUnPedido($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		if ($ArrayDeParametros['idPedido']) {
 			$respuesta=Empleado::PedidoPreparado($ArrayDeParametros['idPedido']);
-			$response->getBody()->write($respuesta);
-			return $response;
+			$objDelaRespuesta= new stdclass();
+			$objDelaRespuesta->respuesta=$respuesta;
+			return $response->withJson($objDelaRespuesta, 200);
 		}
-		$response->getBody()->write('Debe ingresar el id del empleado y el numero del pedido');
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Debe ingresar el numero del pedido";
+		return $response->withJson($objDelaRespuesta, 401);
 	}
 
 	public function CargarUno($request, $response, $args) {
@@ -48,28 +52,25 @@ class empleadoApi extends Empleado implements IApiUsable
 		$miempleado->sueldo=$ArrayDeParametros['sueldo'];
 		$miempleado->estado='activo';
 		$miempleado->InsertarEmpleado();
-		$response->getBody()->write("Se ingreso el empleado!");
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Se ha ingresado el empleado";
+		return $response->withJson($objDelaRespuesta, 200);
 	}
 
 	public function BorrarUno($request, $response, $args) {
-		$ArrayDeParametros = $request->getParsedBody();
-		$id=$ArrayDeParametros['id'];
+		$id=$args['id'];
 		$empleado= new Empleado();
 		$empleado->id=$id;
 		$cantidadDeBorrados=$empleado->BorrarEmpleado();
+		
 		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->cantidad=$cantidadDeBorrados;
-		if($cantidadDeBorrados>0)
-			{
-				$objDelaRespuesta->resultado="algo borro!!!";
-			}
-			else
-			{
-				$objDelaRespuesta->resultado="no Borro nada!!!";
-			}
-		$newResponse = $response->withJson($objDelaRespuesta, 200);  
-		return $newResponse;
+		if($cantidadDeBorrados>0) {
+			$objDelaRespuesta->respuesta="Empleado eliminado";
+			return $response->withJson($objDelaRespuesta, 200);
+		} else {
+			$objDelaRespuesta->respuesta="Error eliminando el empleado";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
 	}
 		
 	public function ModificarUno($request, $response, $args) {

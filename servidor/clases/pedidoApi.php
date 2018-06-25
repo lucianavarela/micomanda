@@ -16,34 +16,17 @@ class pedidoApi extends Pedido implements IApiUsable
 		return $newResponse;
 	}
 
-	public function TraerTodosPendientes($request, $response, $args) {
-		$pedidos=Pedido::TraerPendientes();
-		$newResponse = $response->withJson($pedidos, 200);  
-		return $newResponse;
-	}
-
-	public function TraerPendientesSector($request, $response, $args) {
-		$sector=$args['sector'];
-		$pedidos=Pedido::TraerPendientesDeSector($sector);
-		$newResponse = $response->withJson($pedidos, 200);  
-		return $newResponse;
-	}
-
-	public function TraerTodosListos($request, $response, $args) {
-		$pedidos=Comanda::TraerListos();
-		$newResponse = $response->withJson($pedidos, 200);
-		return $newResponse;
-	}
-
 	public function EntregarACliente($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		if ($ArrayDeParametros['idPedido']) {
 			$respuesta=Pedido::EntregarPedido($ArrayDeParametros['idPedido']);
-			$response->getBody()->write($respuesta);
-			return $response;
+			$objDelaRespuesta= new stdclass();
+			$objDelaRespuesta->respuesta=$respuesta;
+			return $response->withJson($objDelaRespuesta, 200);
 		}
-		$response->getBody()->write('Debe ingresar el id del empleado y el numero del pedido');
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta='Debe ingresar el numero del pedido';
+		return $response->withJson($objDelaRespuesta, 401);
 	}
 
 	public function CargarUno($request, $response, $args) {
@@ -56,36 +39,25 @@ class pedidoApi extends Pedido implements IApiUsable
 		$mipedido->idEmpleado=$idEmpleado;
 		$mipedido->descripcion=$descripcion;
 		$mipedido->InsertarPedido();
-		$archivos = $request->getUploadedFiles();
-		$destino="./fotos/";
-		$nombreAnterior=$archivos['foto']->getClientFilename();
-		$extension= explode(".", $nombreAnterior)  ;
-		$extension=array_reverse($extension);
-		$archivos['foto']->moveTo($destino.$sector.".".$extension[0]);
-		$response->getBody()->write("se guardo el pedido");
-		return $response;
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta='Se guardo el pedido';
+		return $response->withJson($objDelaRespuesta, 200);
 	}
 
 	public function BorrarUno($request, $response, $args) {
-		$ArrayDeParametros = $request->getParsedBody();
-		$id=$args['id'];
-		$pedido= new Pedido();
-		$pedido->id=$id;
+        $pedido = Pedido::TraerPedido($args['id']);
 		$cantidadDeBorrados=$pedido->BorrarPedido();
+		
 		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->cantidad=$cantidadDeBorrados;
-		if($cantidadDeBorrados>0)
-			{
-				$objDelaRespuesta->resultado="algo borro!!!";
-			}
-			else
-			{
-				$objDelaRespuesta->resultado="no Borro nada!!!";
-			}
-		$newResponse = $response->withJson($objDelaRespuesta, 200);  
-		return $newResponse;
+		if($cantidadDeBorrados>0) {
+			$objDelaRespuesta->respuesta="Pedido eliminado";
+			return $response->withJson($objDelaRespuesta, 200);
+		} else {
+			$objDelaRespuesta->respuesta="Error eliminando el pedido";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
 	}
-	
+
 	public function ModificarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$mipedido = new Pedido();

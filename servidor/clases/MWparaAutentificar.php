@@ -92,7 +92,7 @@ class MWparaAutentificar
 	public function VerificarAdmin($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = ($request->getAttribute('empleado'))->sector;
+		$sector = $request->getAttribute('empleado')->sector;
 		if($sector == "management") {
 			$response = $next($request, $response);
 		}
@@ -112,7 +112,7 @@ class MWparaAutentificar
 	public function VerificarEmpleado($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = ($request->getAttribute('empleado'))->sector;
+		$sector = $request->getAttribute('empleado')->sector;
 		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
 			$response = $next($request, $response);
 		}
@@ -132,7 +132,7 @@ class MWparaAutentificar
 	public function VerificarMozo($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$sector = ($request->getAttribute('empleado'))->sector;
+		$sector = $request->getAttribute('empleado')->sector;
 		if($sector == "mozo") {
 			$response = $next($request, $response);
 		}
@@ -204,8 +204,8 @@ class MWparaAutentificar
 	public function FiltrarPedidos($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$idEmpleado = ($request->getAttribute('empleado'))->id;
-		$sector = ($request->getAttribute('empleado'))->sector;
+		$idEmpleado = $request->getAttribute('empleado')->id;
+		$sector = $request->getAttribute('empleado')->sector;
 		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
 			$response = $next($request, $response);
 			$pedidos = json_decode($response->getBody()->__toString());

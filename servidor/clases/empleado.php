@@ -108,8 +108,8 @@ class Empleado
         $empleado->estado = 'ocupado';
         $empleado->GuardarEmpleado();
         $pedido = Pedido::TraerPedido($pedido);
-        $pedido->SetIdEmpleado($tiempo);
-        $pedido->SetEstimacion($empleado->id);
+        $pedido->SetEstimacion($tiempo);
+        $pedido->SetIdEmpleado($empleado->id);
         $pedido->estado = 'en preparación';
         $pedido->GuardarPedido();
         return "Se le ha asignado el pedido para la comanda #".$pedido->GetIdComanda().
@@ -119,16 +119,7 @@ class Empleado
     public static function PedidoPreparado($id) {
         $pedido = Pedido::TraerPedido($id);
         $pedido->estado = 'listo para servir';
-        $pedido->GuardarPedido();
-        $empleado=Empleado::TraerEmpleado($pedido->idEmpleado);
-        $empleado->estado = 'activo';
-        $empleado->GuardarEmpleado();
-        return "Pedido #$id entregado.";
-    }
-    
-    public static function EntregarPedido($id) {
-        $pedido = Pedido::TraerPedido($id);
-        $pedido->estado = 'listo para servir';
+        $pedido->fechaEntregado = date("Y-m-d H:i:s");
         $pedido->GuardarPedido();
         $empleado=Empleado::TraerEmpleado($pedido->idEmpleado);
         $empleado->estado = 'activo';
