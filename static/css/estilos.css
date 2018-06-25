@@ -1,6 +1,7 @@
 * {
     padding: 0;
     margin: 0;
+    font-size: 14px;
 }
 
 body {
@@ -33,7 +34,7 @@ body {
 }
 
 .navegacion nav > ul > li {
-    padding: 15px 100px;
+    padding: 1rem 5rem;
     display: inline-block;
     position: relative;
 }
@@ -80,13 +81,12 @@ body {
 main {
     left: 0;
     top: 0;
-    width: 800px;
     height: 100%;
 }
 
 article {
     text-align: justify;
-    font-size: 20px;
+    font-size: 1rem;
 }
 
 
@@ -100,7 +100,7 @@ article img {
 }
 
 .boton {
-    font-size: 15px;
+    font-size: 1rem;
     border: none;
     cursor: pointer;
     padding: 5px 15px;
@@ -108,7 +108,14 @@ article img {
     background-color: #00b6cd;
     color: white;
     text-decoration: none;
+}
 
+.boton-tabla{
+    cursor: pointer;
+    box-sizing: border-box;
+    background-color: #00b6cd57;
+    color: black;
+    text-decoration: none;
 }
 
 .sidebar {
@@ -187,26 +194,30 @@ footer p {
     width: 500px;
 }
 
-#lista {
+#tabla {
     width: 100%;
     padding-top: 25px;
 }
 
-#lista thead{
+#tabla thead{
     background: #878787;
     color: #fff;
 }
 
-#lista tbody th{
+#tabla th{
     font-weight: normal;
-    padding: 10px;
 }
 
-#lista tr:nth-child(even) {
+#tabla tbody th{
+    padding: 0.3rem;
+    color: #1f1f1f;
+}
+
+#tabla tr:nth-child(even) {
     background: #CCC
 }
 
-#lista input {
+#tabla input {
     border: none;
     background-color: #eda400;
     color: #fff;
@@ -215,7 +226,7 @@ footer p {
     cursor: pointer;
 }
 
-#loading {
+.message {
     background-color: rgba(114,114,114,0.75);
     text-align: center;
     position: fixed;
@@ -231,13 +242,56 @@ footer p {
     top: 250px;
 }
 
-.is-70-box {
-    width: 70% !important;
+.is-box {
     border: 1px solid #be0081;
     box-sizing: border-box;
     border-radius: 3px;
 }
 
-.is-70-box.boton{
+.is-box.boton{
     background-color: #be0081!important;
+}
+
+.login {
+    position: absolute;
+    z-index: 999;
+    right: 1rem;
+    top: 1rem;
+    background-color: #eda400;
+    padding: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login a {
+    position: relative;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+#login, .formulario {
+    padding: 2rem;
+}
+
+.centered-content {
+    text-align: center;
+}
+
+.formulario, #lista {
+    display: none;
+    font-size: 0.9rem;
+}
+
+.formulario input, .formulario select {
+    display: block;
+}
+
+.field {
+    margin: 1rem;
+    width: 20rem;
+}
+
+#agregar {
+    display: none;
 }
