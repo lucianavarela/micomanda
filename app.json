@@ -1,0 +1,8 @@
+{
+  "name": "Mi Comanda",
+  "buildpacks": [
+    {
+      "url": "heroku/php"
+    }
+  ]
+}
