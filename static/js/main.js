@@ -25,8 +25,8 @@ function validarToken() {
 
 function login() {
     $.ajax({
-        url:"/micomanda/servidor/login/",
-        //url:"/servidor/login/",
+        //url:"/micomanda/servidor/login/",
+        url:"/servidor/login/",
         type:"POST",
         data: {
             'usuario': $('#login #usuario').val(),
@@ -54,8 +54,8 @@ function traerInfo(tabla){
     $('.formulario').hide();
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/"+tabla+"/",
-        //url:"/servidor/api/"+tabla+"/",
+        //url:"/micomanda/servidor/api/"+tabla+"/",
+        url:"/servidor/api/"+tabla+"/",
         type:"GET",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
@@ -88,8 +88,8 @@ function modificarArticulo(id){
 function borrarElemento(id, tabla){
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/"+tabla+"/"+id,
-        //url:"/servidor/api/"+tabla+"/",
+        //url:"/micomanda/servidor/api/"+tabla+"/"+id,
+        url:"/servidor/api/"+tabla+"/"+id,
         type:"DELETE",
         contentType: 'application/json',
         beforeSend: function(xhr) {
@@ -122,8 +122,8 @@ function agregarMesa() {
     $('.formulario').hide();
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/mesa/",
-        //url:"/servidor/api/mesa/",
+        //url:"/micomanda/servidor/api/mesa/",
+        url:"/servidor/api/mesa/",
         type:"POST",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
@@ -146,8 +146,8 @@ function agregarComanda() {
     $('.formulario').hide();
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/comanda/",
-        //url:"/servidor/api/comanda/",
+        //url:"/micomanda/servidor/api/comanda/",
+        url:"/servidor/api/comanda/",
         type:"POST",
         data: {
             'nombreCliente': $('#frmComanda #cliente').val(),
@@ -178,8 +178,8 @@ function agregarEmpleado() {
     $('.formulario').hide();
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/empleado/",
-        //url:"/servidor/api/comanda/",
+        //url:"/micomanda/servidor/api/empleado/",
+        url:"/servidor/api/empleado/",
         type:"POST",
         data: {
             'usuario': $('#frmEmpleado #usuario').val(),
@@ -208,8 +208,8 @@ function entregarPedido(idPedido, estadoPedido) {
     $('#loading').show();
     if (estadoPedido == 'en preparación') {
         $.ajax({
-            url:"/micomanda/servidor/api/empleado/entregar_pedido",
-            //url:"/servidor/api/mesa/",
+            //url:"/micomanda/servidor/api/empleado/entregar_pedido",
+            url:"/servidor/api/empleado/entregar_pedido",
             type:"POST",
             data: {
                 'idPedido': idPedido
@@ -231,8 +231,8 @@ function entregarPedido(idPedido, estadoPedido) {
         });
     } else if (estadoPedido == 'listo para servir') {
         $.ajax({
-            url:"/micomanda/servidor/api/pedido/entregar_pedido",
-            //url:"/servidor/api/pedido/entregar_pedido",
+            //url:"/micomanda/servidor/api/pedido/entregar_pedido",
+            url:"/servidor/api/pedido/entregar_pedido",
             type:"POST",
             data: {
                 'idPedido': idPedido
@@ -261,8 +261,8 @@ function tomarPedido(idPedido) {
     var estimacion = prompt('Ingrese su estimación en minutos');
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/empleado/tomar_pedido",
-        //url:"/servidor/api/empleado/tomar_pedido",
+        //url:"/micomanda/servidor/api/empleado/tomar_pedido",
+        url:"/servidor/api/empleado/tomar_pedido",
         type:"POST",
         data: {
             'idPedido': idPedido,
