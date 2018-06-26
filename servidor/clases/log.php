@@ -48,8 +48,9 @@ class Log
     }
 
     public function InsertarLog() {
+        $datetime_now = date("Y-m-d H:i:s");
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into logs (idEmpleado,fecha,accion)values('$this->idEmpleado','$this->fecha','$this->accion')");
+        $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into logs (idEmpleado,fecha,accion)values($this->idEmpleado,'$datetime_now','$this->accion')");
         $consulta->execute();
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }
@@ -64,14 +65,14 @@ class Log
 
     public static function TraerLogs() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select id,idEmpleado as idEmpleado, fecha as fecha,accion as accion from logs");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select l.id, e.usuario as idEmpleado, l.fecha,l.accion FROM logs l LEFT JOIN empleados e on l.idEmpleado = e.id");
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Log");
     }
 
     public static function TraerLog($id) {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select id, idEmpleado as idEmpleado, fecha as fecha,accion as accion from logs where id = $id");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select * FROM logs where id=$id");
         $consulta->execute();
         $logResultado= $consulta->fetchObject('Log');
         return $logResultado;

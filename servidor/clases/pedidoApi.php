@@ -6,12 +6,28 @@ class pedidoApi extends Pedido implements IApiUsable
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
 		$pedidoObj=Pedido::TraerPedido($id);
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver un pedido";
+			$new_log->GuardarLog();
+		}
+		//--
 		$newResponse = $response->withJson($pedidoObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
 		$pedidos=Pedido::TraerPedidos();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver pedidos";
+			$new_log->GuardarLog();
+		}
+		//--
 		$newResponse = $response->withJson($pedidos, 200);  
 		return $newResponse;
 	}
@@ -20,6 +36,14 @@ class pedidoApi extends Pedido implements IApiUsable
 		$ArrayDeParametros = $request->getParsedBody();
 		if ($ArrayDeParametros['idPedido']) {
 			$respuesta=Pedido::EntregarPedido($ArrayDeParametros['idPedido']);
+			//Cargo el log
+			if ($request->getAttribute('empleado')) {
+				$new_log = new Log();
+				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+				$new_log->accion = "Entregar pedido a cliente";
+				$new_log->GuardarLog();
+			}
+			//--
 			$objDelaRespuesta= new stdclass();
 			$objDelaRespuesta->respuesta=$respuesta;
 			return $response->withJson($objDelaRespuesta, 200);
@@ -39,6 +63,14 @@ class pedidoApi extends Pedido implements IApiUsable
 		$mipedido->idEmpleado=$idEmpleado;
 		$mipedido->descripcion=$descripcion;
 		$mipedido->InsertarPedido();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Cargar pedido";
+			$new_log->GuardarLog();
+		}
+		//--
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta='Se guardo el pedido';
 		return $response->withJson($objDelaRespuesta, 200);
@@ -50,6 +82,14 @@ class pedidoApi extends Pedido implements IApiUsable
 		
 		$objDelaRespuesta= new stdclass();
 		if($cantidadDeBorrados>0) {
+			//Cargo el log
+			if ($request->getAttribute('empleado')) {
+				$new_log = new Log();
+				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+				$new_log->accion = "Borrar pedido";
+				$new_log->GuardarLog();
+			}
+			//--
 			$objDelaRespuesta->respuesta="Pedido eliminado";
 			return $response->withJson($objDelaRespuesta, 200);
 		} else {
@@ -69,6 +109,14 @@ class pedidoApi extends Pedido implements IApiUsable
 		$mipedido->fechaIngresado=$ArrayDeParametros['fechaIngresado'];
 		$mipedido->fechaEntregado=$ArrayDeParametros['fechaEntregado'];
 		$mipedido->GuardarPedido();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Modificar pedido";
+			$new_log->GuardarLog();
+		}
+		//--
 		return $response->withJson($mipedido, 200);		
 	}
 }

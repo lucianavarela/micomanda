@@ -2,28 +2,49 @@
 class Encuesta
 {
     public $id;
-    public $param1;
-    public $param2;
-    public $param3;
+    public $idComanda;
+    public $puntosMozo;
+    public $puntosMesa;
+    public $puntosRestaurante;
+    public $puntosCocinero;
+    public $comentario;
     
-    public function GetParam1() {
-        return $this->param1;
+    public function GetIdComanda() {
+        return $this->idComanda;
     }
-    public function GetParam2() {
-        return $this->param2;
+    public function GetPuntosMozo() {
+        return $this->puntosMozo;
     }
-    public function GetParam3() {
-        return $this->param3;
+    public function GetPuntosMesa() {
+        return $this->puntosMesa;
+    }
+    public function GetPuntosRestaurante() {
+        return $this->puntosRestaurante;
+    }
+    public function GetPuntosCocinero() {
+        return $this->puntosCocinero;
+    }
+    public function GetComentario() {
+        return $this->comentario;
     }
 
-    public function SetParam1($value) {
-        $this->param1 = $value;
+    public function SetIdComanda($value) {
+        $this->idComanda = $value;
     }
-    public function SetParam2($value) {
-        $this->param2 = $value;
+    public function SetPuntosMozo($value) {
+        $this->puntosMozo = $value;
     }
-    public function SetParam3($value) {
-        $this->param3 = $value;
+    public function SetPuntosMesa($value) {
+        $this->puntosMesa = $value;
+    }
+    public function SetPuntosRestaurante($value) {
+        $this->puntosRestaurante = $value;
+    }
+    public function SetPuntosCocinero($value) {
+        $this->puntosCocinero = $value;
+    }
+    public function SetComentario($value) {
+        $this->comentario = $value;
     }
     
     public function BorrarEncuesta() {
@@ -40,16 +61,20 @@ class Encuesta
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("
             update encuestas 
-            set param1='$this->param1',
-            param2='$this->param2',
-            param3='$this->param3'
+            set idComanda='$this->idComanda',
+            puntosMozo='$this->puntosMozo',
+            puntosMesa='$this->puntosMesa',
+            puntosRestaurante='$this->puntosRestaurante',
+            puntosCocinero='$this->puntosCocinero',
+            comentario='$this->comentario'
             WHERE id=$this->id");
         return $consulta->execute();
     }
 
     public function InsertarEncuesta() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into encuestas (param1,param2,param3)values('$this->param1','$this->param2','$this->param3')");
+        $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into encuestas (idComanda,puntosMozo,puntosMesa,puntosRestaurante,puntosCocinero,comentario)values
+        ('$this->idComanda','$this->puntosMozo','$this->puntosMesa','$this->puntosRestaurante','$this->puntosCocinero','$this->comentario')");
         $consulta->execute();
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }
@@ -64,20 +89,20 @@ class Encuesta
 
     public static function TraerEncuestas() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select id,param1 as param1, param2 as param2,param3 as param3 from encuestas");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select * from encuestas");
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Encuesta");
     }
 
     public static function TraerEncuesta($id) {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select id, param1 as param1, param2 as param2,param3 as param3 from encuestas where id = $id");
+        $consulta =$objetoAccesoDato->RetornarConsulta("select * from encuestas where id = $id");
         $consulta->execute();
         $encuestaResultado= $consulta->fetchObject('Encuesta');
         return $encuestaResultado;
     }
 
     public function toString() {
-        return "Metodo mostar:".$this->param1."  ".$this->param2."  ".$this->param3;
+        return "Metodo mostar:".$this->idComanda."  ".$this->puntosMozo."  ".$this->puntosMesa;
     }
 }

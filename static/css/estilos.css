@@ -283,7 +283,7 @@ footer p {
     font-size: 0.9rem;
 }
 
-.formulario input, .formulario select {
+.formulario input, .formulario select, .formulario textarea {
     display: block;
 }
 
@@ -294,4 +294,17 @@ footer p {
 
 #agregar {
     display: none;
+}
+
+.section-cliente {
+    margin: 3rem;
+    padding:  2rem;
+    border: 2px solid #00b6cd;
+    border-radius:  5px;
+    width:  fit-content;
+}
+
+.section-cliente input {
+    display: block;
+    margin: 1rem;
 }

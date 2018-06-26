@@ -18,8 +18,20 @@ class MWparaAutentificar
 	public function VerificarUsuario($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-	   
 		if($request->isGet() || $request->isPost()) {
+			$arrayConToken = $request->getHeader('token');
+			$token=$arrayConToken[0];
+			try {
+				AutentificadorJWT::verificarToken($token);
+				$objDelaRespuesta->esValido=true;
+			} catch (Exception $e) {
+				$objDelaRespuesta->excepcion=$e->getMessage();
+				$objDelaRespuesta->esValido=false;
+			}
+			if($objDelaRespuesta->esValido) {
+				$payload=AutentificadorJWT::ObtenerData($token);
+				$request = $request->withAttribute('empleado', $payload);
+			}
             $response = $next($request, $response);
 		} else {
             $arrayConToken = $request->getHeader('token');
@@ -204,14 +216,14 @@ class MWparaAutentificar
 	public function FiltrarPedidos($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$idEmpleado = $request->getAttribute('empleado')->id;
+		$usuarioEmpleado = $request->getAttribute('empleado')->usuario;
 		$sector = $request->getAttribute('empleado')->sector;
 		if($sector == "barra" || $sector == "cerveza" || $sector == "cocina" || $sector == "candy") {
 			$response = $next($request, $response);
 			$pedidos = json_decode($response->getBody()->__toString());
 			if (is_array($pedidos)) {
 				foreach ($pedidos as $key => $pedido) {
-					if (!($pedido->sector == $sector && ($pedido->estado == 'pendiente' || ($pedido->estado == 'en preparación' && $pedido->idEmpleado == $idEmpleado)))) {
+					if (!($pedido->sector == $sector && ($pedido->estado == 'pendiente' || ($pedido->estado == 'en preparación' && $pedido->idEmpleado == $usuarioEmpleado)))) {
 						unset($pedidos[$key]);
 					}
 				}
