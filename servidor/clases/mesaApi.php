@@ -6,12 +6,28 @@ class mesaApi extends Mesa implements IApiUsable
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
 		$mesaObj=Mesa::TraerMesa($id);
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver una mesa";
+			$new_log->GuardarLog();
+		}
+		//--
 		$newResponse = $response->withJson($mesaObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
 		$mesas=Mesa::TraerMesas();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver mesas";
+			$new_log->GuardarLog();
+		}
+		//--
 		$newResponse = $response->withJson($mesas, 200);  
 		return $newResponse;
 	}
@@ -23,6 +39,14 @@ class mesaApi extends Mesa implements IApiUsable
 		$codigo = $mimesa->InsertarMesa();
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="Se ha ingresado la mesa #$codigo";
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Cargar mesa";
+			$new_log->GuardarLog();
+		}
+		//--
 		return $response->withJson($objDelaRespuesta, 200);
 	}
 
@@ -34,6 +58,14 @@ class mesaApi extends Mesa implements IApiUsable
 
 		$objDelaRespuesta= new stdclass();
 		if($cantidadDeBorrados>0) {
+			//Cargo el log
+			if ($request->getAttribute('empleado')) {
+				$new_log = new Log();
+				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+				$new_log->accion = "Borrar mesa";
+				$new_log->GuardarLog();
+			}
+			//--
 			$objDelaRespuesta->respuesta="Mesa eliminada";
 			return $response->withJson($objDelaRespuesta, 200);
 		} else {
@@ -49,6 +81,14 @@ class mesaApi extends Mesa implements IApiUsable
 		$mimesa->param1=$ArrayDeParametros['codigo'];
 		$mimesa->param2=$ArrayDeParametros['estado'];
 		$mimesa->GuardarMesa();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Modificar mesa";
+			$new_log->GuardarLog();
+		}
+		//--
 		return $response->withJson($mimesa, 200);		
 	}
 }

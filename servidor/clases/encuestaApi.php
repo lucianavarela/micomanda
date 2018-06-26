@@ -6,11 +6,27 @@ class encuestaApi extends Encuesta implements IApiUsable
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
 		$encuestaObj=Encuesta::TraerEncuesta($id);
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver encuesta";
+			$new_log->GuardarLog();
+		}
+		//--
 		$newResponse = $response->withJson($encuestaObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver encuestas";
+			$new_log->GuardarLog();
+		}
+		//--
 		$encuestas=Encuesta::TraerEncuestas();
 		$newResponse = $response->withJson($encuestas, 200);  
 		return $newResponse;
@@ -18,17 +34,32 @@ class encuestaApi extends Encuesta implements IApiUsable
 
 	public function CargarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$param1= $ArrayDeParametros['param1'];
-		$param2= $ArrayDeParametros['param2'];
-		$param3= $ArrayDeParametros['param3'];
-		$miencuesta = new Encuesta();
-		$miencuesta->param1=$param1;
-		$miencuesta->param2=$param2;
-		$miencuesta->param3=$param3;
-		$miencuesta->InsertarEncuesta();
-		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->respuesta="Se ha ingresado la encuesta";
-		return $response->withJson($objDelaRespuesta, 200);
+		$comanda=Comanda::TraerComanda($ArrayDeParametros['idComanda']);
+		if ($comanda) {
+			$miencuesta= new Encuesta();
+			$miencuesta->idComanda=$ArrayDeParametros['idComanda'];
+			$miencuesta->puntosMozo=$ArrayDeParametros['puntosMozo'];
+			$miencuesta->puntosMesa=$ArrayDeParametros['puntosMesa'];
+			$miencuesta->puntosRestaurante= $ArrayDeParametros['puntosRestaurante'];
+			$miencuesta->puntosCocinero= $ArrayDeParametros['puntosCocinero'];
+			$miencuesta->comentario= $ArrayDeParametros['comentario'];
+			$miencuesta->InsertarEncuesta();
+			//Cargo el log
+			if ($request->getAttribute('empleado')) {
+				$new_log = new Log();
+				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+				$new_log->accion = "Realizar encuesta";
+				$new_log->GuardarLog();
+			}
+			//--
+			$objDelaRespuesta= new stdclass();
+			$objDelaRespuesta->respuesta="Gracias por realizar nuestra encuestra!";
+			return $response->withJson($objDelaRespuesta, 200);		
+		} else {
+			$objDelaRespuesta= new stdclass();
+			$objDelaRespuesta->respuesta="Codigo de comanda inexistente!";
+			return $response->withJson($objDelaRespuesta, 400);
+		}
 	}
 
 	public function BorrarUno($request, $response, $args) {
@@ -36,7 +67,14 @@ class encuestaApi extends Encuesta implements IApiUsable
 		$encuesta= new Encuesta();
 		$encuesta->id=$id;
 		$cantidadDeBorrados=$encuesta->BorrarEncuesta();
-		
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Borrar encuesta";
+			$new_log->GuardarLog();
+		}
+		//--
 		$objDelaRespuesta= new stdclass();
 		if($cantidadDeBorrados>0) {
 			$objDelaRespuesta->respuesta="Encuesta eliminada";
@@ -51,10 +89,21 @@ class encuestaApi extends Encuesta implements IApiUsable
 		$ArrayDeParametros = $request->getParsedBody();
 		$miencuesta = new Encuesta();
 		$miencuesta->id=$args['id'];
-		$miencuesta->param1=$ArrayDeParametros['param1'];
-		$miencuesta->param2=$ArrayDeParametros['param2'];
-		$miencuesta->param3=$ArrayDeParametros['param3'];
+		$miencuesta->idComanda=$ArrayDeParametros['idComanda'];
+		$miencuesta->puntosMozo=$ArrayDeParametros['puntosMozo'];
+		$miencuesta->puntosMesa=$ArrayDeParametros['puntosMesa'];
+		$miencuesta->puntosRestaurante=$ArrayDeParametros['puntosRestaurante'];
+		$miencuesta->puntosCocinero=$ArrayDeParametros['puntosCocinero'];
+		$miencuesta->comentario=$ArrayDeParametros['comentario'];
 		$miencuesta->GuardarEncuesta();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Modificar encuesta";
+			$new_log->GuardarLog();
+		}
+		//--
 		return $response->withJson($miencuesta, 200);		
 	}
 }

@@ -46,6 +46,11 @@
                     <input type="text" class="is-box" name="clave" id="clave">
                     <input type="button" value="Guardar" id="btnLogin" class="boton is-box" onclick="login()">
                 </form>
+                <div class="section-cliente">
+                    <h3>Seccion Clientes</h3>
+                    <input type="button" value="Ver estado de mis pedidos" id="btnLogin" class="boton" onclick="verEstadoPedidos()">
+                    <input type="button" value="Realizar encuesta" id="btnLogin" class="boton" onclick="realizarEncuesta()">
+                </div>
             </section>
             <section id="frmComanda" class="formulario frm-comanda">
                 <form action="POST" method="post">
@@ -100,6 +105,23 @@
                     <label for="sueldo">Sueldo</label>
                     <input type="number" class="is-box field" name="sueldo" id="sueldo">
                     <input type="button" value="Guardar" class="boton" onclick="agregarEmpleado()">
+                </form>
+            </section>
+            <section id="frmEncuesta" class="formulario frm-encuesta">
+                <form action="POST" method="post">
+                    <label for="comanda">Código de su Comanda</label>
+                    <input type="text" class="is-box field" name="comanda" id="comanda">
+                    <label for="mozo">Puntaje Mozo</label>
+                    <input type="number" class="is-box field" name="mozo" id="mozo" min="1" max="10">
+                    <label for="mesa">Puntaje Mesa</label>
+                    <input type="number" class="is-box field" name="mesa" id="mesa" min="1" max="10">
+                    <label for="restaurante">Puntaje Restaurante</label>
+                    <input type="number" class="is-box field" name="restaurante" id="restaurante" min="1" max="10">
+                    <label for="cocina">Puntaje Cocineros</label>
+                    <input type="number" class="is-box field" name="cocina" id="cocina" min="1" max="10">
+                    <label for="comentario">Comentarios (66 max)</label>
+                    <textarea name="comentario" class="is-box field" id="comentario" rows="2" maxlength="66"></textarea>
+                    <input type="button" value="Guardar" class="boton" onclick="agregarEncuesta()">
                 </form>
             </section>
             <section id="lista">

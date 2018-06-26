@@ -172,7 +172,7 @@ class Pedido
 
     public static function TraerPedidos() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select * from pedidos");
+        $consulta =$objetoAccesoDato->RetornarConsulta("SELECT p.idComanda, p.sector, e.usuario as idEmpleado, p.id, p.descripcion, p.estado, p.estimacion, p.fechaIngresado, p.fechaEntregado FROM pedidos p LEFT JOIN empleados e on p.idEmpleado = e.id");
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
     }

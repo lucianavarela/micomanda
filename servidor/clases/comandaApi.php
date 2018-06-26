@@ -8,6 +8,14 @@ class comandaApi extends Comanda implements IApiUsable
 		$comanda=Comanda::TraerComanda($codigoComanda);
 		if ($comanda) {
 			if ($comanda->GetIdMesa() == $codigoMesa) {
+				//Cargo el log
+				if ($request->getAttribute('empleado')) {
+					$new_log = new Log();
+					$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+					$new_log->accion = "Ver una comanda";
+					$new_log->GuardarLog();
+				}
+				//--
 				$newResponse = $response->withJson($comanda, 200);  
 			} else {
 				$newResponse = array(
@@ -24,6 +32,14 @@ class comandaApi extends Comanda implements IApiUsable
 
 	public function TraerTodos($request, $response, $args) {
 		$comandas=Comanda::TraerComandas();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Ver comandas";
+			$new_log->GuardarLog();
+		}
+		//--
 		$newResponse = $response->withJson($comandas, 200);  
 		return $newResponse;
 	}
@@ -54,6 +70,14 @@ class comandaApi extends Comanda implements IApiUsable
 				$objDelaRespuesta = array(
 					'respuesta'=>"Su comanda ha sido ingresada! Codigo de seguimiento: $codigo"
 				);
+				//Cargo el log
+				if ($request->getAttribute('empleado')) {
+					$new_log = new Log();
+					$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+					$new_log->accion = "Cargar comanda";
+					$new_log->GuardarLog();
+				}
+				//--
 				return $response->withJson($objDelaRespuesta, 200);
 			} else {
 				$objDelaRespuesta = array(
@@ -75,6 +99,14 @@ class comandaApi extends Comanda implements IApiUsable
 		$cantidadDeBorrados=$comanda->BorrarComanda();
 		$objDelaRespuesta= new stdclass();
 		if($cantidadDeBorrados>0) {
+			//Cargo el log
+			if ($request->getAttribute('empleado')) {
+				$new_log = new Log();
+				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+				$new_log->accion = "Borrar comanda";
+				$new_log->GuardarLog();
+			}
+			//--
 			$objDelaRespuesta->respuesta="Comanda eliminada";
 			return $response->withJson($objDelaRespuesta, 200);
 		} else {
@@ -93,6 +125,14 @@ class comandaApi extends Comanda implements IApiUsable
 		$micomanda->idMesa=$ArrayDeParametros['idMesa'];
 		$micomanda->foto=$ArrayDeParametros['foto'];
 		$micomanda->GuardarComanda();
+		//Cargo el log
+		if ($request->getAttribute('empleado')) {
+			$new_log = new Log();
+			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+			$new_log->accion = "Modificar comanda";
+			$new_log->GuardarLog();
+		}
+		//--
 		return $response->withJson($micomanda, 200);		
 	}
 }

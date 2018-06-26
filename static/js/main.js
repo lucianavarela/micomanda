@@ -143,7 +143,6 @@ function agregarMesa() {
 }
 
 function agregarComanda() {
-    $('.formulario').hide();
     $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/comanda/",
@@ -166,6 +165,7 @@ function agregarComanda() {
         },
         success:function() {
             $('#loading').hide();
+            $('.formulario').hide();
             traerInfo('comanda');
         },
         error:function() {
@@ -175,7 +175,6 @@ function agregarComanda() {
 }
 
 function agregarEmpleado() {
-    $('.formulario').hide();
     $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/empleado/",
@@ -195,8 +194,40 @@ function agregarEmpleado() {
             alert(data['respuesta']);
         },
         success:function() {
+            $('.formulario').hide();
             $('#loading').hide();
             traerInfo('empleado');
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
+function agregarEncuesta() {
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/encuesta/",
+        //url:"/servidor/api/encuesta/",
+        type:"POST",
+        data: {
+            'idComanda': $('#frmEncuesta #comanda').val(),
+            'puntosMozo': $('#frmEncuesta #mozo').val(),
+            'puntosMesa': $('#frmEncuesta #mesa').val(),
+            'puntosRestaurante': $('#frmEncuesta #restaurante').val(),
+            'puntosCocinero': $('#frmEncuesta #cocina').val(),
+            'comentario': $('#frmEncuesta #comentario').val()
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('.frm-encuesta .field').val('');
+            $('.formulario').hide();
+            $('#mensaje').text("Please login!");
+            $('#loading').hide();
+            $('#login').show();
         },
         error:function() {
             $('#loading').hide();
@@ -285,6 +316,12 @@ function tomarPedido(idPedido) {
     });
 }
 
+function realizarEncuesta() {
+    $('#mensaje').text("Ingrese los puntajes del 1 al 10 (1 siendo muy bajo y 10 excelente)");
+    $('#login').hide();
+    $('#frmEncuesta').show();
+}
+
 function cargarTabla(data, tabla) {
     var table_content = '<thead><tr>';
     switch(tabla) {
@@ -331,6 +368,25 @@ function cargarTabla(data, tabla) {
             for (i in data) {
                 var sueldo = 'sueldo' in data[i] ? "<th>$ "+data[i].sueldo+"</th>" : ""
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].usuario+"</th><th>"+data[i].clave+"</th><th>"+data[i].estado+"</th><th>"+data[i].sector+"</th>"+sueldo+
+                "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
+                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
+            }
+            table_content += '</tbody>';
+            break;
+        case 'log':
+            table_content += '<th>ID</th><th>Empleado</th><th>Fecha</th><th>Acción Realizada</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            for (i in data) {
+                table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idEmpleado+"</th><th>"+data[i].fecha+"</th><th>"+data[i].accion+"</th>"+
+                "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
+                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
+            }
+            table_content += '</tbody>';
+            break;
+        case 'encuesta':
+            table_content += '<th>ID</th><th>Comanda</th><th>Puntaje Mozo</th><th>Puntaje Mesa</th><th>Puntaje Restaurante</th><th>Puntaje Cocineros</th><th>Comentarios</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            for (i in data) {
+                table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idComanda+"</th><th>"+data[i].puntosMozo+"</th><th>"+data[i].puntosMesa+
+                "</th><th>"+data[i].puntosRestaurante+"</th><th>"+data[i].puntosCocinero+"</th><th>"+data[i].comentario+"</th>"+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
