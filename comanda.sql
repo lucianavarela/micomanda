@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-06-2018 a las 19:00:49
+-- Tiempo de generación: 26-06-2018 a las 19:10:37
 -- Versión del servidor: 10.1.31-MariaDB
 -- Versión de PHP: 5.6.35
 
@@ -45,7 +45,8 @@ INSERT INTO `comandas` (`id`, `nombreCliente`, `codigo`, `importe`, `idMesa`, `f
 (3, 'Familia Gonzales', '85w5f', NULL, 'o8ru0', ''),
 (4, 'Despedida Sol', '85yqy', NULL, 'g8sve', ''),
 (5, 'Familia Gentil', '9x7tx', NULL, 'dyao5', ''),
-(6, 'Las Chichis', 'ow1ee', NULL, 'mch6i', '');
+(6, 'Las Chichis', 'ow1ee', NULL, 'mch6i', ''),
+(7, 'Varelas', 'mvugy', NULL, 'lsjuh', '');
 
 -- --------------------------------------------------------
 
@@ -67,7 +68,7 @@ CREATE TABLE `empleados` (
 --
 
 INSERT INTO `empleados` (`id`, `usuario`, `clave`, `sector`, `estado`, `sueldo`) VALUES
-(1, 'luli', '123', 'cocina', 'activo', 1635),
+(1, 'luli', '123', 'cocina', 'ocupado', 1635),
 (2, 'omar', '123', 'barra', 'activo', 2356),
 (3, 'adri', '123', 'management', 'activo', 15348),
 (4, 'moni', '123', 'cerveza', 'activo', 1500),
@@ -90,6 +91,14 @@ CREATE TABLE `encuestas` (
   `comentario` varchar(100) COLLATE utf8_spanish2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+--
+-- Volcado de datos para la tabla `encuestas`
+--
+
+INSERT INTO `encuestas` (`id`, `idComanda`, `puntosMozo`, `puntosMesa`, `puntosRestaurante`, `puntosCocinero`, `comentario`) VALUES
+(3, '85w5f', 7, 9, 6, 6, 'Todo genial!'),
+(4, '85yqy', 5, 10, 2, 8, 'El mozo medio mala onda, pero todo riquisimo');
+
 -- --------------------------------------------------------
 
 --
@@ -98,10 +107,22 @@ CREATE TABLE `encuestas` (
 
 CREATE TABLE `logs` (
   `id` int(11) NOT NULL,
-  `idEmpleado` int(11) NOT NULL,
+  `idEmpleado` int(11) DEFAULT NULL,
   `fecha` datetime NOT NULL,
   `accion` varchar(100) COLLATE utf8_spanish2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `logs`
+--
+
+INSERT INTO `logs` (`id`, `idEmpleado`, `fecha`, `accion`) VALUES
+(46, 1, '2018-06-26 18:59:50', 'Ver pedidos'),
+(47, 1, '2018-06-26 19:07:28', 'Ver comandas'),
+(48, 1, '2018-06-26 19:07:33', 'Ver empleados'),
+(49, 1, '2018-06-26 19:07:36', 'Ver encuestas'),
+(50, 3, '2018-06-26 19:07:42', 'Ver pedidos'),
+(51, 3, '2018-06-26 19:07:47', 'Ver mesas');
 
 -- --------------------------------------------------------
 
@@ -123,9 +144,10 @@ INSERT INTO `mesas` (`id`, `codigo`, `estado`) VALUES
 (3, 'o8ru0', 'con clientes comiendo'),
 (4, 'g8sve', 'con clientes comiendo'),
 (5, 'dyao5', 'con clientes comiendo'),
-(6, 'lsjuh', 'cerrada'),
+(6, 'lsjuh', 'con cliente esperando pedido'),
 (7, 'mch6i', 'con cliente esperando pedido'),
-(8, 'pybvs', 'cerrada');
+(8, 'pybvs', 'cerrada'),
+(9, 'bd7d6', 'cerrada');
 
 -- --------------------------------------------------------
 
@@ -155,7 +177,10 @@ INSERT INTO `pedidos` (`id`, `idComanda`, `sector`, `idEmpleado`, `descripcion`,
 (13, '9x7tx', 'cocina', 1, '5 rissottos al limon', 'entregado', '2018-06-25 19:08:57', '2018-06-24 16:00:35', '2018-06-25 18:09:16'),
 (14, 'ow1ee', 'barra', 2, '3 caipis', 'listo para servir', '2018-06-25 18:46:27', '2018-06-25 18:05:06', '2018-06-25 18:15:13'),
 (15, '85w5f', 'cerveza', 4, '2 rubias', 'entregado', '2018-06-25 18:35:57', '2018-06-25 18:05:06', '2018-06-25 18:16:04'),
-(16, 'ow1ee', 'cocina', 1, 'mani y papitas', 'listo para servir', '2018-06-25 22:04:54', '2018-06-25 18:05:06', '2018-06-25 18:11:18');
+(16, 'ow1ee', 'cocina', 1, 'mani y papitas', 'listo para servir', '2018-06-25 22:04:54', '2018-06-25 18:05:06', '2018-06-25 18:11:18'),
+(17, 'mvugy', 'barra', NULL, '1 vodka', 'pendiente', NULL, '2018-06-26 17:07:25', NULL),
+(18, 'mvugy', 'cocina', 1, 'asado!', 'en preparación', '2018-06-26 17:29:16', '2018-06-26 17:07:25', '0000-00-00 00:00:00'),
+(19, 'mvugy', 'candy', NULL, '3 chocolates blancos', 'pendiente', NULL, '2018-06-26 17:07:25', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -205,7 +230,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de la tabla `comandas`
 --
 ALTER TABLE `comandas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -217,25 +242,25 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `encuestas`
 --
 ALTER TABLE `encuestas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `mesas`
 --
 ALTER TABLE `mesas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
