@@ -207,8 +207,8 @@ function agregarEmpleado() {
 function agregarEncuesta() {
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/encuesta/",
-        //url:"/servidor/api/encuesta/",
+        //url:"/micomanda/servidor/api/encuesta/",
+        url:"/servidor/api/encuesta/",
         type:"POST",
         data: {
             'idComanda': $('#frmEncuesta #comanda').val(),
