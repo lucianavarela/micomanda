@@ -117,7 +117,7 @@ function borrarElemento(id, tabla){
     $('#loading').show();
     $.ajax({
         //url:"/micomanda/servidor/api/"+tabla+"/"+id,
-        url:"/servidor/api/"+tabla+"/",
+        url:"/servidor/api/"+tabla+"/"+id,
         type:"DELETE",
         contentType: 'application/json',
         beforeSend: function(xhr) {
@@ -236,7 +236,7 @@ function agregarEmpleado() {
     $('#loading').show();
     $.ajax({
         //url:"/micomanda/servidor/api/empleado/",
-        url:"/servidor/api/comanda/",
+        url:"/servidor/api/empleado/",
         type:"POST",
         data: {
             'usuario': $('#frmEmpleado #usuario').val(),
@@ -359,7 +359,7 @@ function entregarPedido(idPedido, estadoPedido) {
     if (estadoPedido == 'en preparación') {
         $.ajax({
             //url:"/micomanda/servidor/api/empleado/entregar_pedido",
-            url:"/servidor/api/mesa/",
+            url:"/servidor/api/empleado/entregar_pedido",
             type:"POST",
             data: {
                 'idPedido': idPedido
