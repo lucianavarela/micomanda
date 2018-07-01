@@ -6,28 +6,20 @@ class pedidoApi extends Pedido implements IApiUsable
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
 		$pedidoObj=Pedido::TraerPedido($id);
-		//Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver un pedido";
-			$new_log->GuardarLog();
-		}
-		//--
 		$newResponse = $response->withJson($pedidoObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
 		$pedidos=Pedido::TraerPedidos();
-		//Cargo el log
+		/*/Cargo el log
 		if ($request->getAttribute('empleado')) {
 			$new_log = new Log();
 			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
 			$new_log->accion = "Ver pedidos";
 			$new_log->GuardarLog();
 		}
-		//--
+		/*/
 		$newResponse = $response->withJson($pedidos, 200);  
 		return $newResponse;
 	}

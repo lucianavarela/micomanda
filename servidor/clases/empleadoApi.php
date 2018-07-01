@@ -6,51 +6,117 @@ class empleadoApi extends Empleado implements IApiUsable
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
 		$empleadoObj = Empleado::TraerEmpleado($id);
-		//Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver empleado";
-			$new_log->GuardarLog();
-		}
-		//--
 		$newResponse = $response->withJson($empleadoObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
 		$empleados = Empleado::TraerEmpleados();
-		//Cargo el log
+		/*/Cargo el log
 		if ($request->getAttribute('empleado')) {
 			$new_log = new Log();
 			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
 			$new_log->accion = "Ver empleados";
 			$new_log->GuardarLog();
 		}
-		//--
+		/*/
 		$newResponse = $response->withJson($empleados, 200);  
 		return $newResponse;
+	}
+	
+	public function DeshabilitarUno($request, $response, $args) {
+		$ArrayDeParametros = $request->getParsedBody();
+		$empleado = Empleado::TraerEmpleado($ArrayDeParametros['idEmpleado']);
+		$idEmpleado = $request->getAttribute('empleado')->id;
+		if ($empleado) {
+			if ($empleado->id != $idEmpleado) {
+				if ($empleado->estado == "activo") {
+					$empleado->DeshabilitarEmpleado();
+					//Cargo el log
+					if ($request->getAttribute('empleado')) {
+						$new_log = new Log();
+						$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+						$new_log->accion = "Deshabilitar empleado $empleado->usuario";
+						$new_log->GuardarLog();
+					}
+					//--
+					$objDelaRespuesta= new stdclass();
+					$objDelaRespuesta->respuesta="Empleado deshabilitado";
+					return $response->withJson($objDelaRespuesta, 200);
+				} else if ($empleado->estado == "ocupado") {
+					$objDelaRespuesta= new stdclass();
+					$objDelaRespuesta->respuesta="Este empleado esta ocupado en este momento.";
+					return $response->withJson($objDelaRespuesta, 401);
+				} else {
+					$objDelaRespuesta= new stdclass();
+					$objDelaRespuesta->respuesta="Este empleado ya esta deshabilitado.";
+					return $response->withJson($objDelaRespuesta, 401);
+				}
+			} else {
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="No puede deshabilitarse a usted mismo.";
+				return $response->withJson($objDelaRespuesta, 401);
+			}
+		}
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Error buscando al empleado";
+		return $response->withJson($objDelaRespuesta, 401);
+	}
+
+	public function ActivarUno($request, $response, $args) {
+		$ArrayDeParametros = $request->getParsedBody();
+		$empleado = Empleado::TraerEmpleado($ArrayDeParametros['idEmpleado']);
+		if ($empleado) {
+			if ($empleado->GetEstado() == 'deshabilitado') {
+				$empleado->ActivarEmpleado();
+				//Cargo el log
+				if ($request->getAttribute('empleado')) {
+					$idEmpleado = $request->getAttribute('empleado')->id;
+					$new_log = new Log();
+					$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+					$new_log->accion = "Activar empleado $empleado->usuario";
+					$new_log->GuardarLog();
+				}
+				//--
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="Empleado activado!";
+				return $response->withJson($objDelaRespuesta, 200);
+			} else {
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="Este empleado ya esta activo.";
+				return $response->withJson($objDelaRespuesta, 401);
+			}
+		}
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Error buscando al empleado";
+		return $response->withJson($objDelaRespuesta, 401);
 	}
 
 	public function TomarUnPedido($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
-		$idEmpleado = $request->getAttribute('empleado')->id;
-		if ($idEmpleado && $ArrayDeParametros['idPedido'] && $ArrayDeParametros['estimacion']) {
-			$respuesta=Empleado::TomarPedido($idEmpleado, $ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
-			//Cargo el log
-			if ($request->getAttribute('empleado')) {
-				$new_log = new Log();
-				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-				$new_log->accion = "Tomar un pedido";
-				$new_log->GuardarLog();
+		$empleado = $request->getAttribute('empleado');
+		if ($empleado && $ArrayDeParametros['idPedido'] && $ArrayDeParametros['estimacion']) {
+			if($empleado->estado == 'activo') {
+				$respuesta=$empleado->TomarPedido($ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
+				//Cargo el log
+				if ($request->getAttribute('empleado')) {
+					$new_log = new Log();
+					$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+					$new_log->accion = "Tomar un pedido";
+					$new_log->GuardarLog();
+				}
+				//--
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta=$respuesta;
+				return $response->withJson($objDelaRespuesta, 200);
+			} else {
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="No puede tomar un pedido en estado ocupado o deshabilitado";
+				return $response->withJson($objDelaRespuesta, 401);
 			}
-			//--
-			$objDelaRespuesta= new stdclass();
-			$objDelaRespuesta->respuesta=$respuesta;
-			return $response->withJson($objDelaRespuesta, 200);
 		}
 		$objDelaRespuesta= new stdclass();
-		$objDelaRespuesta->respuesta="Debe ingresar el id del empleado y el numero del pedido";
+		$objDelaRespuesta->respuesta="Error, campos faltantes";
 		return $response->withJson($objDelaRespuesta, 401);
 	}
 

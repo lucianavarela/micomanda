@@ -292,7 +292,7 @@ footer p {
     width: 20rem;
 }
 
-#agregar {
+#agregar, #listaClientes {
     display: none;
 }
 
@@ -304,7 +304,31 @@ footer p {
     width:  fit-content;
 }
 
-.section-cliente input {
+.section-cliente .boton {
     display: block;
     margin: 1rem;
+}
+
+.section-cliente .is-box {
+    border-color: #00b6cd;
+    display: inline-block;
+    width: 5rem;
+}
+
+.section-cliente label {
+    margin-left: 1rem;
+}
+
+.tabla-min th {
+    padding: 0.2rem 0.3rem !important;
+}
+
+.update-foto {
+    background-color: transparent !important;
+    color: black !important;
+    cursor: normal !important;
+}
+
+.foto-comanda {
+    height: 7rem;
 }

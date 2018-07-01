@@ -18,15 +18,18 @@ class MWparaAutentificar
 	public function VerificarUsuario($request, $response, $next) {
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
+		$objDelaRespuesta->esValido=false;
 		if($request->isGet() || $request->isPost()) {
 			$arrayConToken = $request->getHeader('token');
-			$token=$arrayConToken[0];
-			try {
-				AutentificadorJWT::verificarToken($token);
-				$objDelaRespuesta->esValido=true;
-			} catch (Exception $e) {
-				$objDelaRespuesta->excepcion=$e->getMessage();
-				$objDelaRespuesta->esValido=false;
+			if($arrayConToken) {
+				$token=$arrayConToken[0];
+				try {
+					AutentificadorJWT::verificarToken($token);
+					$objDelaRespuesta->esValido=true;
+				} catch (Exception $e) {
+					$objDelaRespuesta->excepcion=$e->getMessage();
+					$objDelaRespuesta->esValido=false;
+				}
 			}
 			if($objDelaRespuesta->esValido) {
 				$payload=AutentificadorJWT::ObtenerData($token);

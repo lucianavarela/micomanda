@@ -6,28 +6,20 @@ class mesaApi extends Mesa implements IApiUsable
 	public function TraerUno($request, $response, $args) {
 		$id=$args['id'];
 		$mesaObj=Mesa::TraerMesa($id);
-		//Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver una mesa";
-			$new_log->GuardarLog();
-		}
-		//--
 		$newResponse = $response->withJson($mesaObj, 200);  
 		return $newResponse;
 	}
 
 	public function TraerTodos($request, $response, $args) {
 		$mesas=Mesa::TraerMesas();
-		//Cargo el log
+		/*/Cargo el log
 		if ($request->getAttribute('empleado')) {
 			$new_log = new Log();
 			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
 			$new_log->accion = "Ver mesas";
 			$new_log->GuardarLog();
 		}
-		//--
+		/*/
 		$newResponse = $response->withJson($mesas, 200);  
 		return $newResponse;
 	}
@@ -90,5 +82,37 @@ class mesaApi extends Mesa implements IApiUsable
 		}
 		//--
 		return $response->withJson($mimesa, 200);		
+	}
+	
+	public function CerrarUno($request, $response, $args) {
+		$ArrayDeParametros = $request->getParsedBody();
+		$mesa=Mesa::TraerMesa($ArrayDeParametros['codigoMesa']);
+		if ($mesa) {
+			if ($mesa->estado == "con clientes pagando") {
+				$mesa->CerrarMesa();
+				//Cargo el log
+				if ($request->getAttribute('empleado')) {
+					$new_log = new Log();
+					$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+					$new_log->accion = "Cerrar mesa";
+					$new_log->GuardarLog();
+				}
+				//--
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="Mesa cerrada";
+				return $response->withJson($objDelaRespuesta, 200);
+			} else if ($mesa->estado == "cerrada") {
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="Esta mesa ya esta cerrada";
+				return $response->withJson($objDelaRespuesta, 401);
+			} else {
+				$objDelaRespuesta= new stdclass();
+				$objDelaRespuesta->respuesta="Esta mesa tiene comensales";
+				return $response->withJson($objDelaRespuesta, 401);
+			}
+		}
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Error encontrando la mesa seleccionada";
+		return $response->withJson($objDelaRespuesta, 401);
 	}
 }

@@ -30,6 +30,8 @@ $app->group('/api', function () use ($app) {
     $this->get('/', \comandaApi::class . ':TraerTodos');
     $this->get('/{codigoMesa}/{codigoComanda}', \comandaApi::class . ':TraerUno');
     $this->post('/', \comandaApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/foto', \comandaApi::class . ':CargarFoto')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/cobrar', \comandaApi::class . ':CobrarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/cancelar/{id}', \comandaApi::class . ':Cancelar')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->delete('/{id}', \comandaApi::class . ':BorrarUno');
     $this->put('/{id}', \comandaApi::class . ':ModificarUno');
@@ -40,13 +42,16 @@ $app->group('/api', function () use ($app) {
     $this->post('/', \empleadoApi::class . ':CargarUno');
     $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/entregar_pedido', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/deshabilitar_empleado', \empleadoApi::class . ':DeshabilitarUno')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/activar_empleado', \empleadoApi::class . ':ActivarUno')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->delete('/{id}', \empleadoApi::class . ':BorrarUno');
     $this->put('/{id}', \empleadoApi::class . ':ModificarUno');
   });
   $app->group('/mesa', function () use ($app) {
     $this->get('/', \mesaApi::class . ':TraerTodos');
     $this->get('/{id}', \mesaApi::class . ':TraerUno');
-    $this->post('/', \mesaApi::class . ':CargarUno');
+    $this->post('/', \mesaApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/cerrar', \mesaApi::class . ':CerrarUno')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->delete('/{id}', \mesaApi::class . ':BorrarUno');
     $this->put('/{id}', \mesaApi::class . ':ModificarUno');
   });

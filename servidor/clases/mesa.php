@@ -16,13 +16,7 @@ class Mesa
         $this->codigo = $value;
     }
     public function SetEstado($value) {
-        $estados = array("con cliente esperando pedido", "con cliente comiendo", "con cliente pagando", "cerrada");
-        if (in_array($value, $estados)) {
-            $this->estado = $value;
-            return true;
-        } else {
-            return false;
-        }
+        $this->estado = $value;
     }
     
     public function __construct(){}
@@ -83,6 +77,11 @@ class Mesa
             //echo $mesaResultado->toString();
         }
         return $mesaResultado;
+    }
+
+    public function CerrarMesa() {
+        $this->estado = "cerrada";
+        $this->GuardarMesa();
     }
 
     public function toString() {

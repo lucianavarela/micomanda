@@ -80,6 +80,16 @@ class Empleado
         }
     }
 
+    public function DeshabilitarEmpleado() {
+        $this->estado = "deshabilitado";
+        $this->GuardarEmpleado();
+    }
+
+    public function ActivarEmpleado() {
+        $this->estado = "activo";
+        $this->GuardarEmpleado();
+    }
+
     public static function TraerEmpleados() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
         $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados");
@@ -103,13 +113,12 @@ class Empleado
         return $empleadoResultado;
     }
 
-    public static function TomarPedido($id, $pedido, $tiempo) {
-        $empleado=Empleado::TraerEmpleado($id);
-        $empleado->estado = 'ocupado';
+    public function TomarPedido($pedido, $tiempo) {
+        $this->estado = 'ocupado';
         $empleado->GuardarEmpleado();
         $pedido = Pedido::TraerPedido($pedido);
         $pedido->SetEstimacion($tiempo);
-        $pedido->SetIdEmpleado($empleado->id);
+        $pedido->SetIdEmpleado($this->id);
         $pedido->estado = 'en preparación';
         $pedido->GuardarPedido();
         return "Se le ha asignado el pedido para la comanda #".$pedido->GetIdComanda().

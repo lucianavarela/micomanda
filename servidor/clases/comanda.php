@@ -27,20 +27,10 @@ class Comanda
         $this->nombreCliente = $value;
     }
     public function SetCodigo($value) {
-        if (strlen($value) == 5) {
-            $this->codigo = $value;
-            return true;
-        } else {
-            return false;
-        }
+        $this->codigo = $value;
     }
     public function SetImporte($value) {
-        if (is_numeric($value)) {
-            $this->importe = (float)$value;
-            return true;
-        } else {
-            return false;
-        }
+        $this->importe = (float)$value;
     }
     public function SetIdMesa($value) {
         $this->idMesa = $value;
@@ -53,12 +43,9 @@ class Comanda
     
     public function InsertarComanda() {
         $nuevoCodigo = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 5);
-        if ($this->foto !== NULL) {
-            $this->foto = $nuevoCodigo.'.'.$this->foto;
-        }
         $mesa = Mesa::TraerMesa($this->idMesa);
         if ($mesa && $mesa->GetEstado() == 'Cerrada') {
-            $mesa->SetEstado('con cliente esperando pedido');
+            $mesa->SetEstado('con clientes esperando pedido');
             $mesa->GuardarMesa();
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
             $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into comandas (nombreCliente,codigo,idMesa,foto)
@@ -121,6 +108,26 @@ class Comanda
         $consulta->execute();
         $comandaResultado= $consulta->fetchObject('Comanda');
         return $comandaResultado;
+    }
+
+    public function CobrarComanda($importe) {
+        $mesa = Mesa::TraerMesa($this->idMesa);
+        if ($mesa) {
+            if ($mesa->estado == 'con clientes comiendo') {
+                $mesa->SetEstado('con clientes pagando');
+                $mesa->GuardarMesa();
+                $this->SetImporte($importe);
+                $this->GuardarComanda();
+                return 'OK';
+            } else if ($mesa->estado == 'con clientes pagando') {
+                return 'Estos clientes ya estan pagando';
+            } else if ($mesa->estado == 'con clientes esperando pedido') {
+                return 'Estos clientes aún están esperando pedido/s';
+            } else {
+                return 'Esta comanda ya ha sido cerrada';
+            }
+        }
+        return 'Error encontrando la mesa de su comanda';
     }
 
     public function toString() {

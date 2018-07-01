@@ -1,12 +1,9 @@
-var xhr;
-var datos = new Array();
-var postAModificar = null;
-var request;
-var articulos;
+var elementoAModificar = null;
 
 window.onload = function() {
     localStorage.setItem('token', '');
     validarToken();
+    //$.noConflict();
     $("#clave, #usuario").keyup(function(event) {
         if (event.keyCode === 13) {
             login();
@@ -50,6 +47,39 @@ function login() {
     });
 }
 
+function verEstadoPedidos(){
+    var mesa = $('#menuClientes #mesa').val();
+    var comanda = $('#menuClientes #comanda').val();
+    if (mesa != '' && comanda != '') {
+        $('#loading').show();
+        $.ajax({
+            url:"/micomanda/servidor/api/comanda/"+mesa+"/"+comanda,
+            //url:"/servidor/api/comanda/"+mesa+"/"+comanda,
+            type:"GET",
+            success:function(data) {
+                $('#loading').hide();
+                if (data.length > 0) {
+                    var table_content = '<thead><tr><th>ID</th><th>Comanda</th><th>Sector</th><th>Descripcion</th><th>Estado</th><th>Estimado</th></tr></thead><tbody>';
+                    for (i in data) {
+                        var estimacion = data[i].estimacion == null ? "-" : data[i].estimacion;
+                        table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idComanda+"</th><th>"+data[i].sector+"</th><th>"+data[i].descripcion+"</th><th>"+
+                        data[i].estado+"</th></th><th>"+estimacion+"</th>";
+                    }
+                    table_content += '</tbody>';
+                    $('#listaClientes').show().find('#tabla').attr('name', tabla).html(table_content);
+                } else {
+                    alert("Su comanda no tiene pedidos ingresados");
+                }
+            },
+            error:function(data) {
+                $('#loading').hide();
+                var data = JSON.parse(data.responseText)
+                alert(data['respuesta']);
+            }
+        });
+    }
+}
+
 function traerInfo(tabla){
     $('.formulario').hide();
     $('#loading').show();
@@ -80,9 +110,6 @@ function traerInfo(tabla){
 
 function modificarArticulo(id){
     postAModificar = id;
-    var i = getPost(id);
-    document.getElementById('titulo').value = datos[i].titulo;
-    document.getElementById('articulo').value = datos[i].articulo;
 }
 
 function borrarElemento(id, tabla){
@@ -174,6 +201,36 @@ function agregarComanda() {
     });
 }
 
+function subirFotoComanda(button) {
+    var file = button.files[0];
+    var formdata = new FormData();
+    $('#loading').show();
+    formdata.append("foto", file);
+    formdata.append("codigoComanda", $(button).attr('id'));
+    $.ajax({
+        url:"/micomanda/servidor/api/comanda/foto",
+        //url:"/servidor/api/comanda/foto",
+        type: "POST",
+        data: formdata,
+        processData: false,
+        contentType: false,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('comanda');
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
 function agregarEmpleado() {
     $('#loading').show();
     $.ajax({
@@ -228,6 +285,67 @@ function agregarEncuesta() {
             $('#mensaje').text("Please login!");
             $('#loading').hide();
             $('#login').show();
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
+function cobrarComanda(codigoComanda) {
+    do {
+        var importe = prompt("Ingrese el importe a cobrar (decimales separados con un \".\")");
+        var importe_parsed = parseFloat(importe);
+        if (isNaN(importe_parsed)) {
+            alert('Por favor ingrese un numero!');
+        }
+    } while (isNaN(importe_parsed));
+
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/comanda/cobrar",
+        //url:"/servidor/api/comanda/cobrar",
+        type:"POST",
+        data: {
+            'codigoComanda': codigoComanda,
+            'importe': importe_parsed
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('comanda');
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
+function cerrarMesa(codigoMesa) {
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/mesa/cerrar",
+        //url:"/servidor/api/mesa/cerrar",
+        type:"POST",
+        data: {
+            'codigoMesa': codigoMesa
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('mesa');
         },
         error:function() {
             $('#loading').hide();
@@ -316,6 +434,58 @@ function tomarPedido(idPedido) {
     });
 }
 
+function deshabilitarEmpleado(idEmpleado) {
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/empleado/deshabilitar_empleado",
+        //url:"/servidor/api/empleado/deshabilitar_empleado",
+        type:"POST",
+        data: {
+            'idEmpleado': idEmpleado
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('empleado');
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
+function activarEmpleado(idEmpleado) {
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/empleado/activar_empleado",
+        //url:"/servidor/api/empleado/activar_empleado",
+        type:"POST",
+        data: {
+            'idEmpleado': idEmpleado
+        },
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('empleado');
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
 function realizarEncuesta() {
     $('#mensaje').text("Ingrese los puntajes del 1 al 10 (1 siendo muy bajo y 10 excelente)");
     $('#login').hide();
@@ -326,19 +496,22 @@ function cargarTabla(data, tabla) {
     var table_content = '<thead><tr>';
     switch(tabla) {
         case 'mesa':
-            table_content += '<th>ID</th><th>Codigo</th><th>Estado</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            table_content += '<th>ID</th><th>Codigo</th><th>Estado</th><th colspan="3">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].codigo+"</th><th>"+data[i].estado+"</th>"+
-                "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
+                "<th class='boton-tabla' onclick='cerrarMesa(\""+data[i].codigo+"\")'>Cerrar</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;
         case 'comanda':
-            table_content += '<th>ID</th><th>Codigo</th><th>Cliente</th><th>Mesa</th><th>Importe</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            table_content += '<th>ID</th><th>Codigo</th><th>Cliente</th><th>Mesa</th><th>Importe</th><th>Foto</th><th colspan="3">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 var importe = data[i].importe == null ? "-" : "$ " + data[i].importe;
+                var foto = data[i].foto == "" ? '<input type="file" class="update-foto" name="foto" id="'+data[i].codigo+'" onchange="subirFotoComanda(this)">' : "<img class='foto-comanda' src=\"fotos/"+data[i].foto+"\">";
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].codigo+"</th><th>"+data[i].nombreCliente+"</th><th>"+data[i].idMesa+"</th><th>"+importe+"</th>"+
+                "<th>"+foto+"</th>"+
+                "<th class='boton-tabla' onclick='cobrarComanda(\""+data[i].codigo+"\")'>Cobrar</th>"+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
@@ -364,21 +537,21 @@ function cargarTabla(data, tabla) {
             if (data.length>0 && 'sueldo' in data[0]) {
                 table_content += "<th>Sueldo</th>"
             }
-            table_content += '<th colspan="2">Acciones</th></tr></thead><tbody>';
+            table_content += '<th colspan="4">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 var sueldo = 'sueldo' in data[i] ? "<th>$ "+data[i].sueldo+"</th>" : ""
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].usuario+"</th><th>"+data[i].clave+"</th><th>"+data[i].estado+"</th><th>"+data[i].sector+"</th>"+sueldo+
+                "<th class='boton-tabla' onclick='deshabilitarEmpleado("+data[i].id+")'>Deshabilitar</th>"+
+                "<th class='boton-tabla' onclick='activarEmpleado("+data[i].id+")'>Activar</th>"+
                 "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;
         case 'log':
-            table_content += '<th>ID</th><th>Empleado</th><th>Fecha</th><th>Acción Realizada</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            table_content += '<th>ID</th><th>Empleado</th><th>Fecha</th><th>Acción Realizada</th></tr></thead><tbody class="tabla-min">';
             for (i in data) {
-                table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idEmpleado+"</th><th>"+data[i].fecha+"</th><th>"+data[i].accion+"</th>"+
-                "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
-                "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
+                table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idEmpleado+"</th><th>"+data[i].fecha+"</th><th>"+data[i].accion+"</th></tr>";
             }
             table_content += '</tbody>';
             break;

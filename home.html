@@ -46,11 +46,18 @@
                     <input type="text" class="is-box" name="clave" id="clave">
                     <input type="button" value="Guardar" id="btnLogin" class="boton is-box" onclick="login()">
                 </form>
-                <div class="section-cliente">
-                    <h3>Seccion Clientes</h3>
+                <div id="menuClientes" class="section-cliente">
+                    <h3>Sección Clientes</h3>
+                    <label for="mesa">Id Mesa</label>
+                    <input type="text" class="is-box field" name="mesa" id="mesa"><br>
+                    <label for="comanda">Id Comanda</label>
+                    <input type="text" class="is-box field" name="comanda" id="comanda">
                     <input type="button" value="Ver estado de mis pedidos" id="btnLogin" class="boton" onclick="verEstadoPedidos()">
                     <input type="button" value="Realizar encuesta" id="btnLogin" class="boton" onclick="realizarEncuesta()">
                 </div>
+                <section id="listaClientes">
+                    <table id="tabla" name=""></table>
+                </section>
             </section>
             <section id="frmComanda" class="formulario frm-comanda">
                 <form action="POST" method="post">
@@ -58,8 +65,6 @@
                     <input type="text" class="is-box field" name="cliente" id="cliente">
                     <label for="mesa">Id Mesa</label>
                     <input type="text" class="is-box field" name="mesa" id="mesa">
-                    <label for="foto">Foto</label>
-                    <input type="file" class="field" name="foto" id="foto">
                     <label for="barra">Ingresar pedido a la barra</label>
                     <input type="text" class="is-box field" name="barra" id="barra" placeholder="Detalle su pedido..">
                     <label for="cerveza">Ingresar pedido a la beer bar</label>
