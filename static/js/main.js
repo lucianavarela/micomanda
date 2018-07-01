@@ -37,6 +37,7 @@ function login() {
             $('.login a').text(data['usuario']);
             if(data['sector'] == 'management') {
                 $('#agregar').addClass('empleado');
+                $('#tabMetricas').css('display', 'inline-block');
             }
         },
         error:function(data) {

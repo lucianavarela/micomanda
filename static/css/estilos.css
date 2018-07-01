@@ -292,7 +292,7 @@ footer p {
     width: 20rem;
 }
 
-#agregar, #listaClientes {
+#agregar, #listaClientes, #tabMetricas {
     display: none;
 }
 
