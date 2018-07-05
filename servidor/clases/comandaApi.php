@@ -9,6 +9,15 @@ class comandaApi extends Comanda implements IApiUsable
 		if ($comanda) {
 			if ($comanda->GetIdMesa() == $codigoMesa) {
 				$pedidos = Pedido::TraerPedidosPorComanda($comanda->codigo);
+				foreach ($pedidos as $pedido) {
+					if ($pedido->estimacion == NULL) {
+						$pedido->estimacion = "-";
+					} else {
+						$diff = date_diff(date_create($pedido->estimacion), date_create ());
+						$pedido->estimacion = $diff->format ('%i minutos');
+						//$pedido->estimacion = date_create('now')->diff(new DateTime($pedido->estimacion));
+					}
+				}
 				$newResponse = $response->withJson($pedidos, 200);  
 				return $newResponse;
 			} else {
@@ -77,7 +86,7 @@ class comandaApi extends Comanda implements IApiUsable
 		$comanda=Comanda::TraerComanda($ArrayDeParametros['codigoComanda']);
 		if ($comanda) {
 			$archivos = $request->getUploadedFiles();
-			$destino="../fotos/";
+			$destino="./fotos/";
 			$nombreAnterior=$archivos['foto']->getClientFilename();
 			$extension= explode(".", $nombreAnterior)  ;
 			$extension=array_reverse($extension);

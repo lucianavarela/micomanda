@@ -96,8 +96,10 @@ class empleadoApi extends Empleado implements IApiUsable
 		$ArrayDeParametros = $request->getParsedBody();
 		$empleado = $request->getAttribute('empleado');
 		if ($empleado && $ArrayDeParametros['idPedido'] && $ArrayDeParametros['estimacion']) {
+			//var_dump($empleado);
 			if($empleado->estado == 'activo') {
-				$respuesta=$empleado->TomarPedido($ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
+				$empleadoObj = Empleado::TraerEmpleado($empleado->id);
+				$respuesta=$empleadoObj->TomarPedido($ArrayDeParametros['idPedido'], $ArrayDeParametros['estimacion']);
 				//Cargo el log
 				if ($request->getAttribute('empleado')) {
 					$new_log = new Log();

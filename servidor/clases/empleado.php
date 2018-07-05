@@ -115,7 +115,7 @@ class Empleado
 
     public function TomarPedido($pedido, $tiempo) {
         $this->estado = 'ocupado';
-        $empleado->GuardarEmpleado();
+        $this->GuardarEmpleado();
         $pedido = Pedido::TraerPedido($pedido);
         $pedido->SetEstimacion($tiempo);
         $pedido->SetIdEmpleado($this->id);

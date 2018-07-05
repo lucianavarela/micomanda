@@ -31,7 +31,7 @@
                 <li><a onclick="traerInfo('empleado')">Empleados</a></li>
                 <li><a onclick="traerInfo('encuesta')">Encuesta</a></li>
                 <li><a onclick="traerInfo('log')">Log</a></li>
-                <li id="tabMetricas"><a onclick="mostrarMetricas()">Metricas</a></li>
+                <li id="tabMetricas"><a onclick="traerInfo('metricas')">Metricas</a></li>
             </ul>
         </nav>
     </div>
@@ -55,10 +55,10 @@
                     <input type="text" class="is-box field" name="comanda" id="comanda">
                     <input type="button" value="Ver estado de mis pedidos" id="btnLogin" class="boton" onclick="verEstadoPedidos()">
                     <input type="button" value="Realizar encuesta" id="btnLogin" class="boton" onclick="realizarEncuesta()">
+                    <section id="listaClientes">
+                        <table id="tabla-clientes" class="tabla" name=""></table>
+                    </section>
                 </div>
-                <section id="listaClientes">
-                    <table id="tabla" name=""></table>
-                </section>
             </section>
             <section id="frmComanda" class="formulario frm-comanda">
                 <form action="POST" method="post">
@@ -134,7 +134,7 @@
                 <div style="text-align: right" id="agregar" class="comanda mesa">
                     <input type="button" value="Agregar" class="boton is-box" onclick="agregarElemento()" >
                 </div>
-                <table id="tabla" name=""></table>
+                <table id="tabla" class="tabla" name=""></table>
             </section>
         </main>
         

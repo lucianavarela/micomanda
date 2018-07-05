@@ -39,6 +39,7 @@ $app->group('/api', function () use ($app) {
   $app->group('/empleado', function () use ($app) {
     $this->get('/', \empleadoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
     $this->get('/{id}', \empleadoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
+    $this->get('/metricas/', \empleadoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
     $this->post('/', \empleadoApi::class . ':CargarUno');
     $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/entregar_pedido', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');

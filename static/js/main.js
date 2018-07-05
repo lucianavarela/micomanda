@@ -18,6 +18,7 @@ function validarToken() {
     $('#lista').hide();
     $('.formulario').hide();
     $('.login a').text('Login');
+    $('#listaClientes').hide();
 }
 
 function login() {
@@ -53,6 +54,7 @@ function verEstadoPedidos(){
     var comanda = $('#menuClientes #comanda').val();
     if (mesa != '' && comanda != '') {
         $('#loading').show();
+        $('#menuClientes .is-box').val('');
         $.ajax({
             url:"/micomanda/servidor/api/comanda/"+mesa+"/"+comanda,
             //url:"/servidor/api/comanda/"+mesa+"/"+comanda,
@@ -60,14 +62,13 @@ function verEstadoPedidos(){
             success:function(data) {
                 $('#loading').hide();
                 if (data.length > 0) {
-                    var table_content = '<thead><tr><th>ID</th><th>Comanda</th><th>Sector</th><th>Descripcion</th><th>Estado</th><th>Estimado</th></tr></thead><tbody>';
+                    var table_content = '<thead><tr><th>Sector</th><th>Descripcion</th><th>Listo en</th></tr></thead><tbody>';
                     for (i in data) {
                         var estimacion = data[i].estimacion == null ? "-" : data[i].estimacion;
-                        table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idComanda+"</th><th>"+data[i].sector+"</th><th>"+data[i].descripcion+"</th><th>"+
-                        data[i].estado+"</th></th><th>"+estimacion+"</th>";
+                        table_content += "<tr><th>"+data[i].sector+"</th><th>"+data[i].descripcion+"</th><th>"+estimacion+"</th>";
                     }
                     table_content += '</tbody>';
-                    $('#listaClientes').show().find('#tabla').attr('name', tabla).html(table_content);
+                    $('#listaClientes').show().find('#tabla-clientes').attr('name', tabla).html(table_content);
                 } else {
                     alert("Su comanda no tiene pedidos ingresados");
                 }
@@ -82,6 +83,7 @@ function verEstadoPedidos(){
 }
 
 function traerInfo(tabla){
+    tabla = tabla == 'metricas'? 'empleado/metricas' : tabla;
     $('.formulario').hide();
     $('#loading').show();
     $.ajax({
@@ -557,11 +559,10 @@ function cargarTabla(data, tabla) {
             table_content += '</tbody>';
             break;
         case 'encuesta':
-            table_content += '<th>ID</th><th>Comanda</th><th>Puntaje Mozo</th><th>Puntaje Mesa</th><th>Puntaje Restaurante</th><th>Puntaje Cocineros</th><th>Comentarios</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            table_content += '<th>ID</th><th>Comanda</th><th>Puntaje Mozo</th><th>Puntaje Mesa</th><th>Puntaje Restaurante</th><th>Puntaje Cocineros</th><th>Comentarios</th><th colspan="1">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idComanda+"</th><th>"+data[i].puntosMozo+"</th><th>"+data[i].puntosMesa+
                 "</th><th>"+data[i].puntosRestaurante+"</th><th>"+data[i].puntosCocinero+"</th><th>"+data[i].comentario+"</th>"+
-                "<th class='boton-tabla' onclick='modificarArticulo("+data[i].id+")'>Modificar</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
