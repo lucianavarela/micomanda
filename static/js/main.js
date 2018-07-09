@@ -451,7 +451,7 @@ function cancelarPedido(idPedido) {
     $('#loading').show();
     $.ajax({
         //url:"/micomanda/servidor/api/pedido/cancelar_pedido/"+idPedido,
-        url:"/servidor/api/pedido/tomar_pedido/"+idPedido,
+        url:"/servidor/api/pedido/cancelar_pedido/"+idPedido,
         type:"POST",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
