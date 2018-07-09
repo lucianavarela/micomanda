@@ -247,7 +247,7 @@ function agregarEmpleado() {
     $('#loading').show();
     $.ajax({
         //url:"/micomanda/servidor/api/empleado/"+id_for_update,
-        url:"/servidor/api/comanda/",
+        url:"/servidor/api/empleado/"+id_for_update,
         type:method,
         data: {
             'usuario': $('#frmEmpleado #usuario').val(),
