@@ -31,7 +31,7 @@
                 <li><a onclick="traerInfo('empleado')">Empleados</a></li>
                 <li><a onclick="traerInfo('encuesta')">Encuesta</a></li>
                 <li><a onclick="traerInfo('log')">Log</a></li>
-                <li id="tabMetricas"><a onclick="mostrarMetricas()">Metricas</a></li>
+                <li id="tabMetricas"><a onclick="traerInfo('metrica')">Metricas</a></li>
             </ul>
         </nav>
     </div>
@@ -55,10 +55,10 @@
                     <input type="text" class="is-box field" name="comanda" id="comanda">
                     <input type="button" value="Ver estado de mis pedidos" id="btnLogin" class="boton" onclick="verEstadoPedidos()">
                     <input type="button" value="Realizar encuesta" id="btnLogin" class="boton" onclick="realizarEncuesta()">
+                    <section id="listaClientes">
+                        <table id="tabla-clientes" class="tabla" name=""></table>
+                    </section>
                 </div>
-                <section id="listaClientes">
-                    <table id="tabla" name=""></table>
-                </section>
             </section>
             <section id="frmComanda" class="formulario frm-comanda">
                 <form action="POST" method="post">
@@ -67,13 +67,45 @@
                     <label for="mesa">Id Mesa</label>
                     <input type="text" class="is-box field" name="mesa" id="mesa">
                     <label for="barra">Ingresar pedido a la barra</label>
-                    <input type="text" class="is-box field" name="barra" id="barra" placeholder="Detalle su pedido..">
+                    <select class="field is-box" name="barra" id="barra">
+                        <option value="">Elija su pedido..</option>
+                        <option>Caipiriña</option>
+                        <option>Fernet con coca</option>
+                        <option>Destornillador</option>
+                        <option>Whiskey</option>
+                        <option>Margarita</option>
+                    </select>
+
                     <label for="cerveza">Ingresar pedido a la beer bar</label>
-                    <input type="text" class="is-box field" name="cerveza" id="cerveza" placeholder="Detalle su pedido..">
+                    <select class="field is-box" name="cerveza" id="cerveza">
+                        <option value="">Elija su pedido..</option>
+                        <option>Corona</option>
+                        <option>Heineken</option>
+                        <option>Stella Artois</option>
+                        <option>Quilmes</option>
+                        <option>Isenbeck</option>
+                    </select>
+
                     <label for="cocina">Ingresar pedido a la cocina</label>
-                    <input type="text" class="is-box field" name="cocina" id="cocina" placeholder="Detalle su pedido..">
+                    <select class="field is-box" name="cocina" id="cocina">
+                        <option value="">Elija su pedido..</option>
+                        <option>Empanada de carne</option>
+                        <option>Papas fritas con cheddar</option>
+                        <option>Sanguche de lomo</option>
+                        <option>Pizza de muzzarella</option>
+                        <option>Rabas</option>
+                    </select>
+
                     <label for="candy">Ingresar pedido al candy bar</label>
-                    <input type="text" class="is-box field" name="candy" id="candy" placeholder="Detalle su pedido..">
+                    <select class="field is-box" name="candy" id="candy">
+                        <option value="">Elija su pedido..</option>
+                        <option>Volcan de chocolate</option>
+                        <option>Ensalada de frutas</option>
+                        <option>Helado</option>
+                        <option>Flan con crema</option>
+                        <option>Tiramisu</option>
+                    </select>
+
                     <input type="button" value="Guardar" class="boton" onclick="agregarComanda()">
                 </form>
             </section>
@@ -82,7 +114,7 @@
                     <label for="comanda">Id Comanda</label>
                     <input type="text" class="is-box field" name="comanda" id="comanda">
                     <label for="sector">Sector</label>
-                    <select class="field" name="sector" id="sector">
+                    <select class="field is-box" name="sector" id="sector">
                         <option value="barra">Barra</option>
                         <option value="cerveza">Beer Bar</option>
                         <option value="cocina">Cocina</option>
@@ -100,13 +132,19 @@
                     <label for="clave">Clave</label>
                     <input type="text" class="is-box field" name="clave" id="clave">
                     <label for="sector">Sector</label>
-                    <select class="field" name="sector" id="sector">
+                    <select class="is-box field" name="sector" id="sector">
                         <option value="management">Socio</option>
                         <option value="mozo">Mozo</option>
                         <option value="barra">Barra</option>
                         <option value="cerveza">Beer Bar</option>
                         <option value="cocina">Cocina</option>
                         <option value="candy">Candy Bar</option>
+                    </select>
+                    <label for="estado">Estado</label>
+                    <select class="is-box field" name="estado" id="estado">
+                        <option value="activo" selected>Activo</option>
+                        <option value="ocupado">Ocupado</option>
+                        <option value="deshabilitado">Deshabilitado</option>
                     </select>
                     <label for="sueldo">Sueldo</label>
                     <input type="number" class="is-box field" name="sueldo" id="sueldo">
@@ -134,7 +172,7 @@
                 <div style="text-align: right" id="agregar" class="comanda mesa">
                     <input type="button" value="Agregar" class="boton is-box" onclick="agregarElemento()" >
                 </div>
-                <table id="tabla" name=""></table>
+                <table id="tabla" class="tabla" name=""></table>
             </section>
         </main>
         

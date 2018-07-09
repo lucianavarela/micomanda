@@ -38,7 +38,8 @@ $app->group('/api', function () use ($app) {
   });
   $app->group('/empleado', function () use ($app) {
     $this->get('/', \empleadoApi::class . ':TraerTodos')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
-    $this->get('/{id}', \empleadoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarSueldos');
+    $this->get('/{id}', \empleadoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarSueldos')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->get('/metricas/', \empleadoApi::class . ':TraerMetricas')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/', \empleadoApi::class . ':CargarUno');
     $this->post('/tomar_pedido', \empleadoApi::class . ':TomarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/entregar_pedido', \empleadoApi::class . ':EntregarUnPedido')->add(\MWparaAutentificar::class . ':VerificarEmpleado')->add(\MWparaAutentificar::class . ':VerificarToken');
@@ -60,6 +61,7 @@ $app->group('/api', function () use ($app) {
     $this->get('/{id}', \pedidoApi::class . ':TraerUno')->add(\MWparaAutentificar::class . ':FiltrarPedidos')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/', \pedidoApi::class . ':CargarUno')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->post('/entregar_pedido', \pedidoApi::class . ':EntregarACliente')->add(\MWparaAutentificar::class . ':VerificarMozo')->add(\MWparaAutentificar::class . ':VerificarToken');
+    $this->post('/cancelar_pedido/{id}', \pedidoApi::class . ':CancelarUno')->add(\MWparaAutentificar::class . ':VerificarAdmin')->add(\MWparaAutentificar::class . ':VerificarToken');
     $this->delete('/{id}', \pedidoApi::class . ':BorrarUno');
     $this->put('/{id}', \pedidoApi::class . ':ModificarUno');
   });

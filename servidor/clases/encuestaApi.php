@@ -11,14 +11,6 @@ class encuestaApi extends Encuesta implements IApiUsable
 	}
 
 	public function TraerTodos($request, $response, $args) {
-		/*/Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver encuestas";
-			$new_log->GuardarLog();
-		}
-		/*/
 		$encuestas=Encuesta::TraerEncuestas();
 		$newResponse = $response->withJson($encuestas, 200);  
 		return $newResponse;

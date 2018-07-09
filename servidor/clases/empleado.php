@@ -7,6 +7,7 @@ class Empleado
     public $sector;
     public $estado;
     public $sueldo;
+    public $cantidad;
     
     public function GetUsuario() {
         return $this->usuario;
@@ -92,9 +93,13 @@ class Empleado
 
     public static function TraerEmpleados() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados");
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT e.id as id, e.usuario as usuario, e.clave as clave, COUNT(l.id) as cantidad, e.sector as sector, e.estado as estado, e.sueldo as sueldo 
+            FROM logs l RIGHT JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.sector"
+        );
         $consulta->execute();
-        return $consulta->fetchAll(PDO::FETCH_CLASS, "Empleado");
+        $empleados = $consulta->fetchAll(PDO::FETCH_CLASS, "Empleado");
+        return $empleados;
     }
 
     public static function TraerEmpleado($id) {
@@ -103,6 +108,219 @@ class Empleado
         $consulta->execute();
         $empleadoResultado= $consulta->fetchObject('Empleado');
         return $empleadoResultado;
+    }
+
+    public static function Analytics() {
+        $listaAnalytics= array();
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+
+        //7b
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(l.id) as cantidad, e.sector as sector FROM logs l INNER JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.sector"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->cantidad = $row['cantidad'];
+                $rowObj->sector = $row['sector'];
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['7b-logs_por_sector'] = $rows;
+        }
+
+        //8a
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(id) as cantidad, descripcion as pedido FROM pedidos GROUP BY pedido ORDER BY cantidad DESC LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->pedido = $resultado[0]['pedido'];
+            $result->cantidad = $resultado[0]['cantidad'];
+            $listaAnalytics['8a-más_pedido'] = $result;
+        }
+
+        //8b
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(id) as cantidad, descripcion as pedido FROM pedidos GROUP BY pedido ORDER BY cantidad LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->pedido = $resultado[0]['pedido'];
+            $result->cantidad = $resultado[0]['cantidad'];
+            $listaAnalytics['8b-menos_pedido'] = $result;
+        }
+
+        //8c
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT id, TIMESTAMPDIFF(MINUTE, estimacion, fechaEntregado) AS diff FROM pedidos WHERE TIMESTAMPDIFF(MINUTE, estimacion, fechaEntregado) > 0"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->id = $row['id'];
+                $rowObj->demora = $row['diff'] . " minutos";
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['8c-pedidos_demorados'] = $rows;
+        }
+
+        //8d
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT id, descripcion FROM pedidos WHERE estado = 'cancelado'"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->id = $row['id'];
+                $rowObj->descripcion = $row['descripcion'];
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['8d-pedidos_cancelados'] = $rows;
+        }
+
+        //9a
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(id) as cantidad, idMesa as mesa FROM comandas GROUP BY idMesa ORDER BY cantidad DESC LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->cantidad = $resultado[0]['cantidad'];
+            $listaAnalytics['9a-mesa_mas_usada'] = $result;
+        }
+
+        //9b
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(id) as cantidad, idMesa as mesa FROM comandas GROUP BY idMesa ORDER BY cantidad LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->cantidad = $resultado[0]['cantidad'];
+            $listaAnalytics['9b-mesa_menos_usada'] = $result;
+        }
+
+        //9c
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT SUM(importe) as importe, idMesa as mesa FROM comandas WHERE importe is not Null GROUP BY idMesa ORDER BY importe DESC LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->importe = $resultado[0]['importe'];
+            $listaAnalytics['9c-mesa_mas_paga'] = $result;
+        }
+
+        //9d
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT SUM(importe) as importe, idMesa as mesa FROM comandas WHERE importe is not Null GROUP BY idMesa ORDER BY importe LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->importe = $resultado[0]['importe'];
+            $listaAnalytics['9d-mesa_menos_paga'] = $result;
+        }
+
+        //9e
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT importe, idMesa as mesa FROM comandas ORDER BY importe DESC LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->importe = $resultado[0]['importe'];
+            $listaAnalytics['9e-mesa_importe_mas_alto'] = $result;
+        }
+
+        //9f
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT importe, idMesa as mesa FROM comandas WHERE importe is not Null ORDER BY importe LIMIT 1"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->importe = $resultado[0]['importe'];
+            $listaAnalytics['9f-mesa_importe_mas_bajo'] = $result;
+        }
+
+        //9g
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT SUM(importe) as importe, idMesa as mesa
+            FROM comandas WHERE importe is not Null
+            AND codigo IN (SELECT idComanda FROM pedidos WHERE fechaIngresado >= '2018-06-25' AND fechaIngresado <= '2018-07-10')
+            AND idMesa = 'g8sve' GROUP BY idMesa ORDER BY importe"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $result = new stdclass();
+            $result->mesa = $resultado[0]['mesa'];
+            $result->importe = $resultado[0]['importe'];
+            $listaAnalytics['9g-recaudacion_mesa_entre_fechas'] = $result;
+        }
+        
+        //9h
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT id, (AVG(puntosMozo)+AVG(puntosMesa)+AVG(puntosRestaurante)+AVG(puntosCocinero))/4 as promedio, comentario
+            FROM encuestas GROUP BY id HAVING promedio > 5"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->id = $row['id'];
+                $rowObj->comentario = $row['comentario'];
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['9h-mejores_comentarios'] = $rows;
+        }
+
+        //9i
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT id, (AVG(puntosMozo)+AVG(puntosMesa)+AVG(puntosRestaurante)+AVG(puntosCocinero))/4 as promedio, comentario
+            FROM encuestas GROUP BY id HAVING promedio <= 5"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->id = $row['id'];
+                $rowObj->comentario = $row['comentario'];
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['9i-peores_comentarios'] = $rows;
+        }
+        return $listaAnalytics;
     }
 
     public static function ValidarEmpleado($usuario, $clave) {
@@ -115,10 +333,10 @@ class Empleado
 
     public function TomarPedido($pedido, $tiempo) {
         $this->estado = 'ocupado';
-        $empleado->GuardarEmpleado();
+        $this->GuardarEmpleado();
         $pedido = Pedido::TraerPedido($pedido);
         $pedido->SetEstimacion($tiempo);
-        $pedido->SetIdEmpleado($this->id);
+        $pedido->idEmpleado = $this->id;
         $pedido->estado = 'en preparación';
         $pedido->GuardarPedido();
         return "Se le ha asignado el pedido para la comanda #".$pedido->GetIdComanda().

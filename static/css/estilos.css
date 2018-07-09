@@ -194,30 +194,30 @@ footer p {
     width: 500px;
 }
 
-#tabla {
+.tabla {
     width: 100%;
     padding-top: 25px;
 }
 
-#tabla thead{
+.tabla thead{
     background: #878787;
     color: #fff;
 }
 
-#tabla th{
+.tabla th{
     font-weight: normal;
 }
 
-#tabla tbody th{
+.tabla tbody th{
     padding: 0.3rem;
     color: #1f1f1f;
 }
 
-#tabla tr:nth-child(even) {
+.tabla tr:nth-child(even) {
     background: #CCC
 }
 
-#tabla input {
+.tabla input {
     border: none;
     background-color: #eda400;
     color: #fff;

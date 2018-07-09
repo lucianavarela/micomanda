@@ -100,17 +100,32 @@ class Pedido
     }
 
     public function ModificarPedido() {
+        if ($this->estimacion) {
+            $estimacion = "'$this->estimacion'";
+        } else {
+            $estimacion = "NULL";
+        }
+        if ($this->fechaEntregado) {
+            $fechaEntregado = "'$this->fechaEntregado'";
+        } else {
+            $fechaEntregado = "NULL";
+        }
+        if ($this->idEmpleado) {
+            $idEmpleado = "'$this->idEmpleado'";
+        } else {
+            $idEmpleado = "NULL";
+        }
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta =$objetoAccesoDato->RetornarConsulta("
             update pedidos 
             set sector='$this->sector',
             idComanda='$this->idComanda',
-            idEmpleado=$this->idEmpleado,
             descripcion='$this->descripcion',
             estado='$this->estado',
-            estimacion='$this->estimacion',
+            idEmpleado=$idEmpleado,
+            estimacion=$estimacion,
             fechaIngresado='$this->fechaIngresado',
-            fechaEntregado='$this->fechaEntregado'
+            fechaEntregado=$fechaEntregado
             WHERE id=$this->id");
         return $consulta->execute();
     }
@@ -192,6 +207,37 @@ class Pedido
         );
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
+    }
+
+    public function Cancelar() {
+        if ($this->estado == 'entregado') {
+            return "El pedido ya fue entregado";
+        } else if ($this->estado == 'cancelado') {
+            return "El pedido ya fue cancelado";
+        } else {
+            if ($this->estado == 'en preparación') {
+                $empleado=Empleado::TraerEmpleado($this->idEmpleado);
+                $empleado->estado = 'activo';
+                $empleado->GuardarEmpleado();
+            }
+            $this->estado = 'cancelado';
+            $this->GuardarPedido();
+            $comanda=Comanda::TraerComanda($this->idComanda);
+            $todos_pedidos_listos = true;
+            $pedidos_pendientes_de_comanda = Pedido::TraerPedidosPorComanda($comanda->codigo);
+            foreach ($pedidos_pendientes_de_comanda as $pedido) {
+                if (!($pedido->estado == 'entregado' || $pedido->estado == 'cancelado')) {
+                    $todos_pedidos_listos = false;
+                    break;
+                }
+            }
+            if ($todos_pedidos_listos) {
+                $mesa=Mesa::TraerMesa($comanda->idMesa);
+                $mesa->estado = 'con clientes comiendo';
+                $mesa->GuardarMesa();
+            }
+            return "Pedido #$this->id cancelado.";
+        }
     }
 
     public function toString() {
