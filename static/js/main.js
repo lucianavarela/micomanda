@@ -92,7 +92,7 @@ function traerInfo(tabla) {
     $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/"+url+"/",
-        //url:"/servidor/api/"+tabla+"/",
+        //url:"/servidor/api/"+url+"/",
         type:"GET",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
@@ -119,7 +119,7 @@ function borrarElemento(id, tabla){
     $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/"+tabla+"/"+id,
-        //url:"/servidor/api/"+tabla+"/",
+        //url:"/servidor/api/"+tabla+"/"+id,
         type:"DELETE",
         contentType: 'application/json',
         beforeSend: function(xhr) {
@@ -247,7 +247,7 @@ function agregarEmpleado() {
     $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/empleado/"+id_for_update,
-        //url:"/servidor/api/comanda/",
+        //url:"/servidor/api/empleado/"+id_for_update,
         type:method,
         data: {
             'usuario': $('#frmEmpleado #usuario').val(),
@@ -371,7 +371,7 @@ function entregarPedido(idPedido, estadoPedido) {
     if (estadoPedido == 'en preparación') {
         $.ajax({
             url:"/micomanda/servidor/api/empleado/entregar_pedido",
-            //url:"/servidor/api/mesa/",
+            //url:"/servidor/api/empleado/entregar_pedido",
             type:"POST",
             data: {
                 'idPedido': idPedido
@@ -451,7 +451,7 @@ function cancelarPedido(idPedido) {
     $('#loading').show();
     $.ajax({
         url:"/micomanda/servidor/api/pedido/cancelar_pedido/"+idPedido,
-        //url:"/servidor/api/pedido/tomar_pedido/"+idPedido,
+        //url:"/servidor/api/pedido/cancelar_pedido/"+idPedido,
         type:"POST",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
