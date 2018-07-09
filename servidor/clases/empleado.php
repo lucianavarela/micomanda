@@ -7,6 +7,7 @@ class Empleado
     public $sector;
     public $estado;
     public $sueldo;
+    public $cantidad;
     
     public function GetUsuario() {
         return $this->usuario;
@@ -92,9 +93,13 @@ class Empleado
 
     public static function TraerEmpleados() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-        $consulta =$objetoAccesoDato->RetornarConsulta("select * from empleados");
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT e.id as id, e.usuario as usuario, e.clave as clave, COUNT(l.id) as cantidad, e.sector as sector, e.estado as estado, e.sueldo as sueldo 
+            FROM logs l RIGHT JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.sector"
+        );
         $consulta->execute();
-        return $consulta->fetchAll(PDO::FETCH_CLASS, "Empleado");
+        $empleados = $consulta->fetchAll(PDO::FETCH_CLASS, "Empleado");
+        return $empleados;
     }
 
     public static function TraerEmpleado($id) {
@@ -103,6 +108,48 @@ class Empleado
         $consulta->execute();
         $empleadoResultado= $consulta->fetchObject('Empleado');
         return $empleadoResultado;
+    }
+
+    public static function Analytics() {
+        $listaAnalytics= array();
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+
+        //1
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(l.id) as cantidad, e.sector as sector FROM logs l INNER JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.sector"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->cantidad = $row['cantidad'];
+                $rowObj->sector = $row['sector'];
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['1'] = $rows;
+        }
+
+        //2
+        $consulta =$objetoAccesoDato->RetornarConsulta(
+            "SELECT COUNT(l.id) as cantidad, e.sector as sector FROM logs l INNER JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.sector"
+        );
+        $consulta->execute();
+        $resultado= $consulta->fetchAll();
+        if ($resultado) {
+            $rows = array();
+            foreach($resultado as $row) {
+                $rowObj = new stdclass();
+                $rowObj->cantidad = $row['cantidad'];
+                $rowObj->sector = $row['sector'];
+                array_push($rows, $rowObj);
+            }
+            $listaAnalytics['1'] = $rows;
+        }
+
+
+        return $listaAnalytics;
     }
 
     public static function ValidarEmpleado($usuario, $clave) {

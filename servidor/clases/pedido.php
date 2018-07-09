@@ -105,12 +105,8 @@ class Pedido
             update pedidos 
             set sector='$this->sector',
             idComanda='$this->idComanda',
-            idEmpleado=$this->idEmpleado,
             descripcion='$this->descripcion',
-            estado='$this->estado',
-            estimacion='$this->estimacion',
-            fechaIngresado='$this->fechaIngresado',
-            fechaEntregado='$this->fechaEntregado'
+            estado='$this->estado'
             WHERE id=$this->id");
         return $consulta->execute();
     }

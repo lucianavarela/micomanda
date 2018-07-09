@@ -15,7 +15,6 @@ class comandaApi extends Comanda implements IApiUsable
 					} else {
 						$diff = date_diff(date_create($pedido->estimacion), date_create ());
 						$pedido->estimacion = $diff->format ('%i minutos');
-						//$pedido->estimacion = date_create('now')->diff(new DateTime($pedido->estimacion));
 					}
 				}
 				$newResponse = $response->withJson($pedidos, 200);  
@@ -34,14 +33,6 @@ class comandaApi extends Comanda implements IApiUsable
 
 	public function TraerTodos($request, $response, $args) {
 		$comandas=Comanda::TraerComandas();
-		/*/Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver comandas";
-			$new_log->GuardarLog();
-		}
-		/*/
 		$newResponse = $response->withJson($comandas, 200);  
 		return $newResponse;
 	}

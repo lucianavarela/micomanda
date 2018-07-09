@@ -31,7 +31,7 @@
                 <li><a onclick="traerInfo('empleado')">Empleados</a></li>
                 <li><a onclick="traerInfo('encuesta')">Encuesta</a></li>
                 <li><a onclick="traerInfo('log')">Log</a></li>
-                <li id="tabMetricas"><a onclick="traerInfo('metricas')">Metricas</a></li>
+                <li id="tabMetricas"><a onclick="traerInfo('metrica')">Metricas</a></li>
             </ul>
         </nav>
     </div>
@@ -100,13 +100,19 @@
                     <label for="clave">Clave</label>
                     <input type="text" class="is-box field" name="clave" id="clave">
                     <label for="sector">Sector</label>
-                    <select class="field" name="sector" id="sector">
+                    <select class="is-box field" name="sector" id="sector">
                         <option value="management">Socio</option>
                         <option value="mozo">Mozo</option>
                         <option value="barra">Barra</option>
                         <option value="cerveza">Beer Bar</option>
                         <option value="cocina">Cocina</option>
                         <option value="candy">Candy Bar</option>
+                    </select>
+                    <label for="estado">Estado</label>
+                    <select class="is-box field" name="estado" id="estado">
+                        <option value="activo" selected>Activo</option>
+                        <option value="ocupado">Ocupado</option>
+                        <option value="deshabilitado">Deshabilitado</option>
                     </select>
                     <label for="sueldo">Sueldo</label>
                     <input type="number" class="is-box field" name="sueldo" id="sueldo">

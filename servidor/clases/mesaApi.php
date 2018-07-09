@@ -12,14 +12,6 @@ class mesaApi extends Mesa implements IApiUsable
 
 	public function TraerTodos($request, $response, $args) {
 		$mesas=Mesa::TraerMesas();
-		/*/Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver mesas";
-			$new_log->GuardarLog();
-		}
-		/*/
 		$newResponse = $response->withJson($mesas, 200);  
 		return $newResponse;
 	}

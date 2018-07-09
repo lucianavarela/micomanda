@@ -12,15 +12,13 @@ class empleadoApi extends Empleado implements IApiUsable
 
 	public function TraerTodos($request, $response, $args) {
 		$empleados = Empleado::TraerEmpleados();
-		/*/Cargo el log
-		if ($request->getAttribute('empleado')) {
-			$new_log = new Log();
-			$new_log->idEmpleado = $request->getAttribute('empleado')->id;
-			$new_log->accion = "Ver empleados";
-			$new_log->GuardarLog();
-		}
-		/*/
 		$newResponse = $response->withJson($empleados, 200);  
+		return $newResponse;
+	}
+	
+	public function TraerMetricas($request, $response, $args) {
+		$metricas = Empleado::Analytics();
+		$newResponse = $response->withJson($metricas, 200);  
 		return $newResponse;
 	}
 	
@@ -150,7 +148,7 @@ class empleadoApi extends Empleado implements IApiUsable
 		$miempleado->clave=$ArrayDeParametros['clave'];
 		$miempleado->sector=$ArrayDeParametros['sector'];
 		$miempleado->sueldo=$ArrayDeParametros['sueldo'];
-		$miempleado->estado='activo';
+		$miempleado->estado=$ArrayDeParametros['estado'];
 		$miempleado->InsertarEmpleado();
 		//Cargo el log
 		if ($request->getAttribute('empleado')) {
@@ -206,6 +204,8 @@ class empleadoApi extends Empleado implements IApiUsable
 			$new_log->GuardarLog();
 		}
 		//--
-		return $response->withJson($miempleado, 200);		
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta="Empleado modificado";
+		return $response->withJson($objDelaRespuesta, 200);	
 	}
 }
