@@ -95,7 +95,7 @@ class Empleado
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
         $consulta =$objetoAccesoDato->RetornarConsulta(
             "SELECT e.id as id, e.usuario as usuario, e.clave as clave, COUNT(l.id) as cantidad, e.sector as sector, e.estado as estado, e.sueldo as sueldo 
-            FROM logs l RIGHT JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.sector"
+            FROM logs l RIGHT JOIN empleados e ON l.idEmpleado=e.id GROUP BY e.id"
         );
         $consulta->execute();
         $empleados = $consulta->fetchAll(PDO::FETCH_CLASS, "Empleado");
