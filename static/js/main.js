@@ -18,6 +18,8 @@ function validarToken() {
     $('#lista').hide();
     $('.formulario').hide();
     $('.login a').text('Login');
+    $('#agregar').removeClass('empleado');
+    $('#tabMetricas').css('display', 'none');
     $('#listaClientes').hide();
     elementoAModificar = null;
 }
@@ -445,6 +447,29 @@ function tomarPedido(idPedido) {
     });
 }
 
+function cancelarPedido(idPedido) {
+    $('#loading').show();
+    $.ajax({
+        url:"/micomanda/servidor/api/pedido/cancelar_pedido/"+idPedido,
+        //url:"/servidor/api/pedido/tomar_pedido/"+idPedido,
+        type:"POST",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('token', localStorage.getItem('token'));
+        },
+        complete:function(data) {
+            var data = JSON.parse(data.responseText);
+            alert(data['respuesta']);
+        },
+        success:function() {
+            $('#loading').hide();
+            traerInfo('pedido');
+        },
+        error:function() {
+            $('#loading').hide();
+        }
+    });
+}
+
 function deshabilitarEmpleado(idEmpleado) {
     $('#loading').show();
     $.ajax({
@@ -536,10 +561,9 @@ function modificarEmpleado(id) {
 }
 
 function cargarTabla(data, tabla) {
-    var table_content = '<thead><tr>';
     switch(tabla) {
         case 'mesa':
-            table_content += '<th>ID</th><th>Codigo</th><th>Estado</th><th colspan="3">Acciones</th></tr></thead><tbody>';
+            table_content = '<thead><tr><th>ID</th><th>Codigo</th><th>Estado</th><th colspan="3">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].codigo+"</th><th>"+data[i].estado+"</th>"+
                 "<th class='boton-tabla' onclick='cerrarMesa(\""+data[i].codigo+"\")'>Cerrar</th>"+
@@ -548,7 +572,7 @@ function cargarTabla(data, tabla) {
             table_content += '</tbody>';
             break;
         case 'comanda':
-            table_content += '<th>ID</th><th>Codigo</th><th>Cliente</th><th>Mesa</th><th>Importe</th><th>Foto</th><th colspan="2">Acciones</th></tr></thead><tbody>';
+            table_content = '<thead><tr><th>ID</th><th>Codigo</th><th>Cliente</th><th>Mesa</th><th>Importe</th><th>Foto</th><th colspan="2">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 var importe = data[i].importe == null ? "-" : "$ " + data[i].importe;
                 if (data[i].foto == ""){
@@ -564,7 +588,7 @@ function cargarTabla(data, tabla) {
             table_content += '</tbody>';
             break;
         case 'pedido':
-            table_content += '<th>ID</th><th>Comanda</th><th>Sector</th><th>Descripcion</th><th>Estado</th><th>Ingresado</th><th>Empleado</th><th>Estimado</th><th>Preparado</th><th colspan="3">Acciones</th></tr></thead><tbody>';
+            table_content = '<thead><tr><th>ID</th><th>Comanda</th><th>Sector</th><th>Descripcion</th><th>Estado</th><th>Ingresado</th><th>Empleado</th><th>Estimado</th><th>Preparado</th><th colspan="4">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 var estimacion = data[i].estimacion == null ? "-" : data[i].estimacion;
                 var empleado = data[i].idEmpleado == null ? "-" : data[i].idEmpleado;
@@ -573,12 +597,13 @@ function cargarTabla(data, tabla) {
                 "</th><th>"+empleado+"</th><th>"+estimacion+"</th><th>"+entregado+"</th>"+
                 "<th class='boton-tabla' onclick='tomarPedido("+data[i].id+")'>Tomar</th>"+
                 "<th class='boton-tabla' onclick='entregarPedido("+data[i].id+", \""+data[i].estado+"\")'>Entregar</th>"+
+                "<th class='boton-tabla' onclick='cancelarPedido("+data[i].id+")'>Cancelar</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
             break;
         case 'empleado':
-            table_content += '<th>ID</th><th>Usuario</th><th>Clave</th><th>Estado</th><th>Sector</th>';
+            table_content = '<thead><tr><th>ID</th><th>Usuario</th><th>Clave</th><th>Estado</th><th>Sector</th>';
             if (data.length>0 && 'sueldo' in data[0]) {
                 table_content += "<th>Sueldo</th>"
             }
@@ -594,20 +619,34 @@ function cargarTabla(data, tabla) {
             table_content += '</tbody>';
             break;
         case 'log':
-            table_content += '<th>ID</th><th>Empleado</th><th>Fecha</th><th>Acción Realizada</th></tr></thead><tbody class="tabla-min">';
+            table_content = '<thead><tr><th>ID</th><th>Empleado</th><th>Fecha</th><th>Acción Realizada</th></tr></thead><tbody class="tabla-min">';
             for (i in data) {
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idEmpleado+"</th><th>"+data[i].fecha+"</th><th>"+data[i].accion+"</th></tr>";
             }
             table_content += '</tbody>';
             break;
         case 'encuesta':
-            table_content += '<th>ID</th><th>Comanda</th><th>Puntaje Mozo</th><th>Puntaje Mesa</th><th>Puntaje Restaurante</th><th>Puntaje Cocineros</th><th>Comentarios</th><th colspan="1">Acciones</th></tr></thead><tbody>';
+            table_content = '<thead><tr><th>ID</th><th>Comanda</th><th>Puntaje Mozo</th><th>Puntaje Mesa</th><th>Puntaje Restaurante</th><th>Puntaje Cocineros</th><th>Comentarios</th><th colspan="1">Acciones</th></tr></thead><tbody>';
             for (i in data) {
                 table_content += "<tr><th>"+data[i].id+"</th><th>"+data[i].idComanda+"</th><th>"+data[i].puntosMozo+"</th><th>"+data[i].puntosMesa+
                 "</th><th>"+data[i].puntosRestaurante+"</th><th>"+data[i].puntosCocinero+"</th><th>"+data[i].comentario+"</th>"+
                 "<th class='boton-tabla' onclick='borrarElemento("+data[i].id+",\""+tabla+"\")'>Borrar</th></tr>";
             }
             table_content += '</tbody>';
+            break;
+        case 'metrica':
+            table_content = '<thead><tr><th>Reporte</th><th>Resultado</th></tr></thead><tbody>';
+            for (i in data) {
+                table_content+= "<tr><th>"+i+"</th><th>";
+                if (data[i].constructor === Array) {
+                    for (j in data[i]) {
+                        table_content += JSON.stringify(data[i][j]) + '<br>';
+                    }
+                } else {
+                    table_content += JSON.stringify(data[i]);
+                }
+                table_content+="</th></tr>";
+            }
             break;
         default:
             table_content += "</tr></thead><tbody></tbody>";
@@ -616,4 +655,3 @@ function cargarTabla(data, tabla) {
     $('#mensaje').text(tabla.toUpperCase() + "S");
     $('#lista').show().find('#tabla').attr('name', tabla).html(table_content);
 }
-

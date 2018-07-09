@@ -37,6 +37,27 @@ class pedidoApi extends Pedido implements IApiUsable
 		return $response->withJson($objDelaRespuesta, 401);
 	}
 
+	public function CancelarUno($request, $response, $args) {
+		if ($args['id']) {
+			$pedidoObj=Pedido::TraerPedido($args['id']);
+			$respuesta = $pedidoObj->Cancelar();
+			//Cargo el log
+			if ($request->getAttribute('empleado')) {
+				$new_log = new Log();
+				$new_log->idEmpleado = $request->getAttribute('empleado')->id;
+				$new_log->accion = "Cancelar pedidos";
+				$new_log->GuardarLog();
+			}
+			//--
+			$objDelaRespuesta= new stdclass();
+			$objDelaRespuesta->respuesta=$respuesta;
+			return $response->withJson($objDelaRespuesta, 200);
+		}
+		$objDelaRespuesta= new stdclass();
+		$objDelaRespuesta->respuesta='Debe ingresar el numero del pedido';
+		return $response->withJson($objDelaRespuesta, 401);
+	}
+
 	public function CargarUno($request, $response, $args) {
 		$ArrayDeParametros = $request->getParsedBody();
 		$comanda=Comanda::TraerComanda($ArrayDeParametros['idComanda']);
