@@ -450,8 +450,8 @@ function tomarPedido(idPedido) {
 function cancelarPedido(idPedido) {
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/pedido/cancelar_pedido/"+idPedido,
-        //url:"/servidor/api/pedido/tomar_pedido/"+idPedido,
+        //url:"/micomanda/servidor/api/pedido/cancelar_pedido/"+idPedido,
+        url:"/servidor/api/pedido/tomar_pedido/"+idPedido,
         type:"POST",
         beforeSend: function(xhr) {
             xhr.setRequestHeader('token', localStorage.getItem('token'));
@@ -531,8 +531,8 @@ function realizarEncuesta() {
 function modificarEmpleado(id) {
     $('#loading').show();
     $.ajax({
-        url:"/micomanda/servidor/api/empleado/"+id,
-        //url:"/servidor/api/empleado/"+id,
+        //url:"/micomanda/servidor/api/empleado/"+id,
+        url:"/servidor/api/empleado/"+id,
         type:"GET",
         data: {
             'idEmpleado': id
